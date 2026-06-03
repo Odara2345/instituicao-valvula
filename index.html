@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>VÁLVULA SYSTEM - INICIALIZANDO</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #33ff33;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 40px;
+            text-shadow: 0 0 5px #33ff33;
+            overflow: hidden; /* Esconde barras de rolagem */
+        }
+
+        /* Efeito CRT/Scanlines */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .boot-text {
+            white-space: pre-wrap; /* Mantém quebras de linha */
+            display: inline-block;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background-color: #33ff33;
+            animation: piscar 0.8s infinite;
+        }
+
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        #logo {
+            margin-top: 30px;
+            font-size: 0.8em;
+            display: none; /* Escondido inicialmente */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="boot-container">
+        <span class="boot-text" id="boot-output"></span><span class="cursor"></span>
+    </div>
+
+    <div id="logo">
+<pre>
+      _____   _       _  _____   _____
+     |  __ \ | |     | ||  ___| |  ___|
+     | |  | || |     | || |__   | |__
+     | |  | || |     | ||  __|  |  __|
+     | |__| || |_____| || |___  | |___
+     |_____/ |_______|_||_____| |_____|
+
+VÁLVULA - SISTEMAS DE PRESSÃO DIMENSIONAL
+</pre>
+    </div>
+
+    <script>
+        const textoBoot = [
+            "SISTEMA INICIALIZANDO... BIOS VER. 4.13\n",
+            "© 1988 INSTITUIÇÃO VÁLVULA\n",
+            "--------------------------------------------\n",
+            "MEMÓRIA CONVENCIONAL: 640KB......... OK\n",
+            "MEMÓRIA ESTENDIDA: 31744KB......... OK\n",
+            "VERIFICANDO INTEGRIDADE DA REALIDADE... [98%]\n",
+            "ADVERTÊNCIA: ANOMALIA DE NÍVEL V-01 DETECTADA.\n",
+            "CARREGANDO SISTEMA OPERACIONAL V-DOS v4.02...\n",
+            "............................................\n",
+            "ESTABELECENDO CONEXÃO SEGURA COM O NÚCLEO.\n",
+            "LOGIN NECESSÁRIO.\n",
+            "REDIRECIONANDO..."
+        ];
+
+        const outputDiv = document.getElementById('boot-output');
+        const logoDiv = document.getElementById('logo');
+        let linhaAtual = 0;
+
+        function printarLinha() {
+            if (linhaAtual < textoBoot.length) {
+                outputDiv.innerHTML += textoBoot[linhaAtual];
+                linhaAtual++;
+                // Velocidade variada para dar mais realismo
+                setTimeout(printarLinha, Math.random() * 400 + 100); 
+            } else {
+                // Fim do texto, mostra o logo e redireciona
+                setTimeout(() => {
+                    logoDiv.style.display = 'block';
+                }, 1000);
+                
+                setTimeout(() => {
+                    // MUDAR PARA O SEU ARQUIVO DE LOGIN
+                    window.location.href = 'sistema.html'; 
+                }, 4000);
+            }
+        }
+
+        // Inicia a animação
+        printarLinha();
+    </script>
+</body>
+</html>

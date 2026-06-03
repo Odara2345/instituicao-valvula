@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SISTEMA VÁLVULA - AUTENTICAÇÃO DOS</title>
+    <style>
+        /* Estilo Retro Terminal */
+        body {
+            background-color: #0a0a0a;
+            color: #33ff33;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            text-shadow: 0 0 5px #33ff33;
+        }
+
+        /* Linhas de Varredura CRT */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        header, section, .terminal-box {
+            border: 1px solid #33ff33;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
+            background-color: #0d0d0d;
+        }
+
+        h1, h2 {
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* Inputs e Botões estilo CLI */
+        input[type="text"], input[type="password"] {
+            background-color: #000;
+            border: 1px solid #33ff33;
+            color: #33ff33;
+            font-family: 'Courier New', monospace;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        
+        input[type="text"]:focus, input[type="password"]:focus {
+            box-shadow: 0 0 8px #33ff33;
+        }
+
+        button {
+            background-color: #33ff33;
+            color: #0a0a0a;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: #22aa22;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        a {
+            color: #33ff33;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            background-color: #33ff33;
+            color: #0a0a0a;
+        }
+
+        .alerta {
+            color: #ff3333;
+            text-shadow: 0 0 5px #ff3333;
+            animation: piscar 1s infinite;
+        }
+
+        .sucesso {
+            color: #33ff33;
+        }
+
+        .oculto {
+            display: none !important;
+        }
+
+        .tarja-preta {
+            background-color: #33ff33;
+            color: #33ff33;
+            transition: color 0.3s ease;
+        }
+        .tarja-preta:hover {
+            color: #000; /* Revela o texto ao passar o mouse */
+        }
+
+        @keyframes piscar {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="tela-login" class="terminal-box" style="max-width: 450px; margin: 10% auto;">
+        <h2>=== ACESSO AO SISTEMA ===</h2>
+        <p style="text-align: center; font-size: 0.8em;">DIRETRIZ GOVERNAMENTAL DE SEGURANÇA V-DOS</p>
+        <hr style="border-color: #33ff33;">
+        
+        <div id="mensagem-erro" class="alerta oculto" style="text-align: center; margin-bottom: 15px;">
+            [ERRO: CREDENCIAIS INVÁLIDAS / ACESSO NEGADO]
+        </div>
+
+        <label for="usuario">IDENTIFICAÇÃO DO AGENTE:</label>
+        <input type="text" id="usuario" placeholder="Ex: Agente 000" autocomplete="off">
+
+        <label for="senha">CHAVE DE CRIPTOGRAFIA (SENHA):</label>
+        <input type="password" id="senha" placeholder="••••••••••••">
+
+        <button onclick="tentarLogin()">Executar Autenticação</button>
+    </div>
+
+
+    <div id="conteudo-sistema" class="oculto">
+        <header>
+            <h1>=== INSTITUIÇÃO VÁLVULA ===</h1>
+            <p style="text-align: center;">SISTEMA OPERACIONAL V-DOS v4.02 — LOGADO COMO: <span id="nome-agente" class="sucesso"></span></p>
+            <p style="text-align: center;">NÍVEL DE ACESSO DO USUÁRIO: <span id="nivel-agente" class="sucesso"></span></p>
+        </header>
+
+        <section>
+            <h2>Menu de Diretórios</h2>
+            <ul>
+                <li>> <a href="#documentos">1. DIRETÓRIO DE DOCUMENTOS (/DOCS)</a></li>
+                <li>> <a href="#niveis">2. MAPEAMENTO DE NÍVEIS (/LEVELS)</a></li>
+                <li>> <a href="#criaturas">3. ARQUIVO DE ENTIDADES (/ENTITY)</a></li>
+            </ul>
+        </section>
+
+        <section id="documentos">
+            <h2>[1] Documentos Oficiais</h2>
+            
+            <div class="doc-nivel-1">
+                <p><strong>ID_DOC: 089-A (NÍVEL 1)</strong><br>
+                <strong>Assunto:</strong> Incidente de Clipping no Setor de Manutenção.<br>
+                <em>"O funcionário relatou que a parede da sala de caldeiras perdeu colisão por 3 segundos. Recomenda-se isolamento da área e uso de medidores de pressão da Válvula."</em></p>
+                <hr style="border-color: #22aa22; border-style: dashed;">
+                <p><strong>ID_DOC: 102-B (NÍVEL 1)</strong><br>
+                <strong>Assunto:</strong> Suprimentos e Água de Amêndoa.<br>
+                <em>"Agentes de campo reportaram lotes adulterados vindo do terminal subterrâneo. Inspecione o lacre antes do consumo."</em></p>
+            </div>
+
+            <div class="doc-nivel-2 oculto" id="doc-secreto">
+                <p class="alerta"><strong>ID_DOC: 999-OMEGA (RESTRITO: NÍVEL 2+)</strong><br>
+                <strong>Assunto:</strong> O Experimento de Pressão Humana.<br>
+                <em>"O colapso da realidade nas Backrooms não é um acidente. A Válvula está deliberadamente deixando o vapor dimensional vazar para..." <span class="tarja-preta">[DADO CENSURADO PELO ALTO ESCALÃO]</span></em></p>
+            </div>
+        </section>
+
+        <section id="niveis">
+            <h2>[2] Níveis Mapeados</h2>
+            <p><strong>Nível V-01: "O Saguão Amarelo"</strong><br>
+            Estabilidade: Segura | Presença de Entidades: Baixa.<br>
+            Diretrizes: Evite carpetes úmidos. Mantenha o rádio na frequência 440Hz para captar sinais de bueiros e tubulações da Válvula.</p>
+        </section>
+
+        <section id="criaturas">
+            <h2>[3] Banco de Dados: Entidades</h2>
+            <p><strong>Entidade #12: "O Vazador"</strong><br>
+            Sons de vapor e passos pesados em canos. Se ouvir o som de uma válvula girando, <strong>NÃO OLHE PARA TRÁS</strong> e corra na direção oposta antes que a pressão do ar aumente.</p>
+        </section>
+
+        <footer style="text-align: center;">
+            <p>Válvula © 1988 - Mantendo a pressão sob controle. <button onclick="logout()" style="width: auto; padding: 2px 10px; font-size: 0.8em; margin-left: 10px;">LOGOUT</button></p>
+        </footer>
+    </div>
+
+    <script>
+        // Banco de dados de usuários e suas permissões configuradas
+        const bancoUsuarios = {
+            "Agente 032": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
+            "Agente 682": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
+            "Agente 732": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
+            "Agente 823": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
+            "Agente 926": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
+            // Exemplo de administrador/mestre para você testar se quiser
+            "Diretor Valvula": { senha: "ADMIN_SECRET_1988", nivel: 2 } 
+        };
+
+        function tentarLogin() {
+            const userInput = document.getElementById("usuario").value.trim();
+            const passwordInput = document.getElementById("senha").value;
+            const erroDiv = document.getElementById("mensagem-erro");
+
+            // Verifica se o usuário existe no banco
+            if (bancoUsuarios[userInput]) {
+                const dadosUsuario = bancoUsuarios[userInput];
+
+                // Verifica se a senha está correta
+                if (dadosUsuario.senha === passwordInput) {
+                    erroDiv.classList.add("oculto"); // Esconde erro se houver
+                    liberarSistema(userInput, dadosUsuario.nivel);
+                    return;
+                }
+            }
+
+            // Se falhar em qualquer etapa, exibe erro
+            erroDiv.classList.remove("oculto");
+            document.getElementById("senha").value = ""; // Limpa a senha digitada
+        }
+
+        function liberarSistema(nome, nivel) {
+            // Transiciona as telas
+            document.getElementById("tela-login").classList.add("oculto");
+            document.getElementById("conteudo-sistema").classList.remove("oculto");
+
+            // Atualiza cabeçalho com infos do agente
+            document.getElementById("nome-agente").innerText = nome.toUpperCase();
+            document.getElementById("nivel-agente").innerText = "NÍVEL " + nivel;
+
+            // Controle de acesso aos documentos baseado no nível
+            if (nivel >= 2) {
+                document.getElementById("doc-secreto").classList.remove("oculto");
+            } else {
+                document.getElementById("doc-secreto").classList.add("oculto");
+            }
+        }
+
+        function logout() {
+            // Limpa os campos e reseta a tela
+            document.getElementById("usuario").value = "";
+            document.getElementById("senha").value = "";
+            document.getElementById("tela-login").classList.remove("oculto");
+            document.getElementById("conteudo-sistema").classList.add("oculto");
+        }
+
+        // Permite apertar "Enter" no teclado para logar
+        document.getElementById("senha").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                tentarLogin();
+            }
+        });
+    </script>
+</body>
+</html>
