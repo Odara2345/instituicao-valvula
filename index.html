@@ -10,7 +10,7 @@
             font-family: 'Courier New', Courier, monospace;
             padding: 40px;
             text-shadow: 0 0 5px #33ff33;
-            overflow: hidden; /* Esconde barras de rolagem */
+            overflow: hidden;
         }
 
         /* Efeito CRT/Scanlines */
@@ -25,9 +25,15 @@
             pointer-events: none;
         }
 
+        .boot-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
         .boot-text {
-            white-space: pre-wrap; /* Mantém quebras de linha */
+            white-space: pre-wrap;
             display: inline-block;
+            line-height: 1.4;
         }
 
         .cursor {
@@ -36,6 +42,7 @@
             height: 18px;
             background-color: #33ff33;
             animation: piscar 0.8s infinite;
+            vertical-align: middle;
         }
 
         @keyframes piscar {
@@ -45,8 +52,8 @@
 
         #logo {
             margin-top: 30px;
-            font-size: 0.8em;
-            display: none; /* Escondido inicialmente */
+            font-size: 0.85em;
+            display: none;
         }
     </style>
 </head>
@@ -70,19 +77,30 @@ VÁLVULA - SISTEMAS DE PRESSÃO DIMENSIONAL
     </div>
 
     <script>
+        // Array com as linhas normais de um PC antigo + os mistérios do RPG
         const textoBoot = [
-            "SISTEMA INICIALIZANDO... BIOS VER. 4.13\n",
-            "© 1988 INSTITUIÇÃO VÁLVULA\n",
-            "--------------------------------------------\n",
-            "MEMÓRIA CONVENCIONAL: 640KB......... OK\n",
-            "MEMÓRIA ESTENDIDA: 31744KB......... OK\n",
-            "VERIFICANDO INTEGRIDADE DA REALIDADE... [98%]\n",
-            "ADVERTÊNCIA: ANOMALIA DE NÍVEL V-01 DETECTADA.\n",
+            "ROM BIOS VERSION 1.04 - VALVULA CORP.\n",
+            "COPR. 1985-1988 ALL RIGHTS RESERVED.\n\n",
+            "CPU: INTEL 80386 DX @ 25 MHz\n",
+            "CO-PROCESSOR: WEITEK 3167 NOT DETECTED\n",
+            "CHECKING KEYBOARD............................ OK (101 KEYS)\n",
+            "TESTING EXTENDED RAM: ", // Deixamos sem o '\n' para a contagem acontecer na mesma linha
+            "640 KB BASE MEMORY OK\n",
+            "31744 KB EXTENDED MEMORY OK\n\n",
+            "DETECTING IDE DRIVES...\n",
+            "  PRIMARY MASTER : V-DRIVE HDD 40MB (CYL 733, HEAD 7, SEC 17)\n",
+            "  PRIMARY SLAVE  : NONE\n",
+            "  FLOPPY DRIVE A : 3.5\" 1.44MB DETECTED\n",
+            "  FLOPPY DRIVE B : 5.25\" 1.2MB DETECTED\n\n",
+            "SERIAL PORTS: COM1 (03F8h), COM2 (02F8h)\n",
+            "PARALLEL PORTS: LPT1 (0378h)\n",
+            "--------------------------------------------------\n",
+            "INITIALIZING KERNEL MODULES...\n",
+            "VERIFICANDO INTEGRIDADE DA REALIDADE......... [98%]\n",
+            "ADVERTÊNCIA: FLUTUAÇÃO DE PRESSÃO NO NÍVEL V-01.\n",
             "CARREGANDO SISTEMA OPERACIONAL V-DOS v4.02...\n",
-            "............................................\n",
-            "ESTABELECENDO CONEXÃO SEGURA COM O NÚCLEO.\n",
-            "LOGIN NECESSÁRIO.\n",
-            "REDIRECIONANDO..."
+            "ESTABELECENDO CONEXÃO SEGURA COM O NÚCLEO VÁLVULA.\n\n",
+            "REDIRECIONANDO PARA TERMINAL DE AUTENTICAÇÃO..."
         ];
 
         const outputDiv = document.getElementById('boot-output');
@@ -91,25 +109,54 @@ VÁLVULA - SISTEMAS DE PRESSÃO DIMENSIONAL
 
         function printarLinha() {
             if (linhaAtual < textoBoot.length) {
+                
+                // MECÂNICA ESPECIAL: Efeito de contagem da memória RAM simulada
+                if (textoBoot[linhaAtual] === "TESTING EXTENDED RAM: ") {
+                    outputDiv.innerHTML += "TESTING EXTENDED RAM: ";
+                    let contador = 0;
+                    
+                    function contarRAM() {
+                        if (contador <= 31744) {
+                            // Atualiza apenas os números da RAM simulando o teste antigo
+                            outputDiv.innerHTML = outputDiv.innerHTML.replace(/\d+ KB OK/, "") + contador + " KB OK";
+                            contador += 1024; // Sobe de 1MB em 1MB
+                            setTimeout(contarRAM, 30);
+                        } else {
+                            outputDiv.innerHTML += "\n";
+                            linhaAtual++;
+                            setTimeout(printarLinha, 200);
+                        }
+                    }
+                    contarRAM();
+                    return; // Pausa o fluxo normal para rodar o loop da RAM
+                }
+
+                // Fluxo normal para as outras linhas
                 outputDiv.innerHTML += textoBoot[linhaAtual];
                 linhaAtual++;
-                // Velocidade variada para dar mais realismo
-                setTimeout(printarLinha, Math.random() * 400 + 100); 
+                
+                // Variabilidade no tempo de resposta para parecer um carregamento real do HD
+                let delay = Math.random() * 300 + 80;
+                if (textoBoot[linhaAtual - 1].includes("DETECTING") || textoBoot[linhaAtual - 1].includes("VERIFICANDO")) {
+                    delay = 1200; // Demora um pouco mais nessas partes para dar suspense
+                }
+                
+                setTimeout(printarLinha, delay); 
             } else {
-                // Fim do texto, mostra o logo e redireciona
+                // Fim do texto, mostra o logo ASCII da instituição
                 setTimeout(() => {
                     logoDiv.style.display = 'block';
-                }, 1000);
+                }, 800);
                 
+                // Envia para a página de login
                 setTimeout(() => {
-                    // MUDAR PARA O SEU ARQUIVO DE LOGIN
                     window.location.href = 'sistema.html'; 
-                }, 4000);
+                }, 4500);
             }
         }
 
-        // Inicia a animação
-        printarLinha();
+        // Inicia a animação ao carregar a página
+        window.onload = printarLinha;
     </script>
 </body>
 </html>
