@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>SISTEMA VÁLVULA - AUTENTICAÇÃO DOS</title>
+    <title>SISTEMA VÁLVULA - DIRETÓRIOS</title>
     <style>
         /* Estilo Retro Terminal */
         body {
@@ -33,10 +33,10 @@
             background-color: #0d0d0d;
         }
 
-        h1, h2 {
-            text-align: center;
+        h1, h2, h3 {
             text-transform: uppercase;
         }
+        h1, h2 { text-align: center; }
 
         /* Inputs e Botões estilo CLI */
         input[type="text"], input[type="password"] {
@@ -51,10 +51,6 @@
             margin-bottom: 15px;
             outline: none;
         }
-        
-        input[type="text"]:focus, input[type="password"]:focus {
-            box-shadow: 0 0 8px #33ff33;
-        }
 
         button {
             background-color: #33ff33;
@@ -64,55 +60,50 @@
             font-family: 'Courier New', monospace;
             font-weight: bold;
             cursor: pointer;
-            width: 100%;
             text-transform: uppercase;
         }
 
-        button:hover {
-            background-color: #22aa22;
-        }
+        button:hover { background-color: #22aa22; }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin: 10px 0;
-        }
-
-        a {
+        /* Estilo dos Links e Itens do Menu */
+        .menu-item {
+            display: block;
+            margin: 12px 0;
             color: #33ff33;
             text-decoration: none;
             font-weight: bold;
+            cursor: pointer;
+            width: fit-content;
         }
 
-        a:hover {
+        .menu-item:hover {
             background-color: #33ff33;
             color: #0a0a0a;
         }
 
+        /* Classes Utilitárias */
         .alerta {
             color: #ff3333;
             text-shadow: 0 0 5px #ff3333;
             animation: piscar 1s infinite;
         }
 
-        .sucesso {
-            color: #33ff33;
-        }
+        .sucesso { color: #33ff33; }
+        .oculto { display: none !important; }
 
-        .oculto {
-            display: none !important;
-        }
-
+        /* Tarja preta de censura */
         .tarja-preta {
             background-color: #33ff33;
             color: #33ff33;
             transition: color 0.3s ease;
         }
-        .tarja-preta:hover {
-            color: #000; /* Revela o texto ao passar o mouse */
+        .tarja-preta:hover { color: #000; }
+
+        /* Estilo para separar os blocos de arquivos inseridos */
+        .arquivo-bloco {
+            border-left: 3px solid #33ff33;
+            padding-left: 15px;
+            margin-bottom: 30px;
         }
 
         @keyframes piscar {
@@ -124,6 +115,7 @@
 </head>
 <body>
 
+    <!-- ================= TELA DE LOGIN ================= -->
     <div id="tela-login" class="terminal-box" style="max-width: 450px; margin: 10% auto;">
         <h2>=== ACESSO AO SISTEMA ===</h2>
         <p style="text-align: center; font-size: 0.8em;">DIRETRIZ GOVERNAMENTAL DE SEGURANÇA V-DOS</p>
@@ -139,10 +131,11 @@
         <label for="senha">CHAVE DE CRIPTOGRAFIA (SENHA):</label>
         <input type="password" id="senha" placeholder="••••••••••••">
 
-        <button onclick="tentarLogin()">Executar Autenticação</button>
+        <button onclick="tentarLogin()" style="width: 100%;">Executar Autenticação</button>
     </div>
 
 
+    <!-- ================= CONTEÚDO PRINCIPAL ================= -->
     <div id="conteudo-sistema" class="oculto">
         <header>
             <h1>=== INSTITUIÇÃO VÁLVULA ===</h1>
@@ -150,97 +143,127 @@
             <p style="text-align: center;">NÍVEL DE ACESSO DO USUÁRIO: <span id="nivel-agente" class="sucesso"></span></p>
         </header>
 
+        <!-- MENU DE DIRETÓRIOS -->
         <section>
             <h2>Menu de Diretórios</h2>
-            <ul>
-                <li>> <a href="#documentos">1. DIRETÓRIO DE DOCUMENTOS (/DOCS)</a></li>
-                <li>> <a href="#niveis">2. MAPEAMENTO DE NÍVEIS (/LEVELS)</a></li>
-                <li>> <a href="#criaturas">3. ARQUIVO DE ENTIDADES (/ENTITY)</a></li>
-            </ul>
+            <div style="border-bottom: 1px solid #33ff33; padding-bottom: 5px; margin-bottom: 10px;">
+                C:\VALVULA_CORE\> dir
+            </div>
+            
+            <span class="menu-item" onclick="abrirDiretorio('docs')">[DIR] 1. DOCUMENTOS_OFICIAIS (/DOCS)</span>
+            <span class="menu-item" onclick="abrirDiretorio('levels')">[DIR] 2. NIVEIS_MAPEADOS (/LEVELS)</span>
+            <span class="menu-item" onclick="abrirDiretorio('entities')">[DIR] 3. BANCO_DE_ENTIDADES (/ENTITY)</span>
         </section>
 
-        <section id="documentos">
-            <h2>[1] Documentos Oficiais</h2>
-            
-            <div class="doc-nivel-1">
-                <p><strong>ID_DOC: 089-A (NÍVEL 1)</strong><br>
-                <strong>Assunto:</strong> Incidente de Clipping no Setor de Manutenção.<br>
+        <!-- ================= DIRETÓRIO 1: DOCUMENTOS ================= -->
+        <section id="dir-docs" class="oculto">
+            <button onclick="voltarAoMenu()">[..] Voltar ao Diretório Raiz</button>
+            <h2 style="margin-top: 20px;">📂 Diretório: /DOCS</h2>
+            <hr style="border-color: #33ff33; margin-bottom: 20px;">
+
+            <!-- CASO QUEIRA ADICIONAR NOVO DOCUMENTO, COPIE DAQUI... -->
+            <div class="arquivo-bloco">
+                <h3>ID_DOC: 089-A</h3>
+                <p><strong>Assunto:</strong> Incidente de Clipping no Setor de Manutenção.<br>
+                <strong>Status:</strong> Arquivado.<br>
                 <em>"O funcionário relatou que a parede da sala de caldeiras perdeu colisão por 3 segundos. Recomenda-se isolamento da área e uso de medidores de pressão da Válvula."</em></p>
-                <hr style="border-color: #22aa22; border-style: dashed;">
-                <p><strong>ID_DOC: 102-B (NÍVEL 1)</strong><br>
-                <strong>Assunto:</strong> Suprimentos e Água de Amêndoa.<br>
+            </div>
+            <!-- ...ATÉ AQUI E COLE LOGO ABAIXO -->
+
+            <div class="arquivo-bloco">
+                <h3>ID_DOC: 102-B</h3>
+                <p><strong>Assunto:</strong> Suprimentos e Água de Amêndoa.<br>
+                <strong>Status:</strong> Revisado.<br>
                 <em>"Agentes de campo reportaram lotes adulterados vindo do terminal subterrâneo. Inspecione o lacre antes do consumo."</em></p>
             </div>
 
-            <div class="doc-nivel-2 oculto" id="doc-secreto">
-                <p class="alerta"><strong>ID_DOC: 999-OMEGA (RESTRITO: NÍVEL 2+)</strong><br>
-                <strong>Assunto:</strong> O Experimento de Pressão Humana.<br>
+            <!-- Exemplo de documento ultra-secreto (Nível 2 ou superior) -->
+            <div id="doc-secreto" class="arquivo-bloco oculto">
+                <h3 class="alerta">ID_DOC: 999-OMEGA [RESTRITO NÍVEL 2+]</h3>
+                <p><strong>Assunto:</strong> O Experimento de Pressão Humana.<br>
                 <em>"O colapso da realidade nas Backrooms não é um acidente. A Válvula está deliberadamente deixando o vapor dimensional vazar para..." <span class="tarja-preta">[DADO CENSURADO PELO ALTO ESCALÃO]</span></em></p>
             </div>
         </section>
 
-        <section id="niveis">
-            <h2>[2] Níveis Mapeados</h2>
-            <p><strong>Nível V-01: "O Saguão Amarelo"</strong><br>
-            Estabilidade: Segura | Presença de Entidades: Baixa.<br>
-            Diretrizes: Evite carpetes úmidos. Mantenha o rádio na frequência 440Hz para captar sinais de bueiros e tubulações da Válvula.</p>
+        <!-- ================= DIRETÓRIO 2: NÍVEIS ================= -->
+        <section id="dir-levels" class="oculto">
+            <button onclick="voltarAoMenu()">[..] Voltar ao Diretório Raiz</button>
+            <h2 style="margin-top: 20px;">📂 Diretório: /LEVELS</h2>
+            <hr style="border-color: #33ff33; margin-bottom: 20px;">
+
+            <!-- CASO QUEIRA ADICIONAR NOVO NÍVEL, COPIE DAQUI... -->
+            <div class="arquivo-bloco">
+                <h3>Nível V-01: "O Saguão Amarelo"</h3>
+                <p><strong>Classe de Sobrevivência:</strong> Seguro<br>
+                <strong>Presença de Entidades:</strong> Mínima<br>
+                <strong>Diretrizes:</strong> Evite carpetes úmidos. Mantenha o rádio de comunicação na frequência 440Hz para captar sinais de bueiros e tubulações da Válvula.</p>
+            </div>
+            <!-- ...ATÉ AQUI E COLE LOGO ABAIXO -->
+
+            <div class="arquivo-bloco">
+                <h3>Nível V-02: "Zona de Tubulação Principal"</h3>
+                <p><strong>Classe de Sobrevivência:</strong> Indeterminada<br>
+                <strong>Presença de Entidades:</strong> Moderada<br>
+                <strong>Diretrizes:</strong> Calor extremo. Se a temperatura subir mais que 50°C nos medidores portáteis, evacue o corredor imediatamente antes da liberação de vapor.</p>
+            </div>
         </section>
 
-        <section id="criaturas">
-            <h2>[3] Banco de Dados: Entidades</h2>
-            <p><strong>Entidade #12: "O Vazador"</strong><br>
-            Sons de vapor e passos pesados em canos. Se ouvir o som de uma válvula girando, <strong>NÃO OLHE PARA TRÁS</strong> e corra na direção oposta antes que a pressão do ar aumente.</p>
+        <!-- ================= DIRETÓRIO 3: ENTIDADES ================= -->
+        <section id="dir-entities" class="oculto">
+            <button onclick="voltarAoMenu()">[..] Voltar ao Diretório Raiz</button>
+            <h2 style="margin-top: 20px;">📂 Diretório: /ENTITY</h2>
+            <hr style="border-color: #33ff33; margin-bottom: 20px;">
+
+            <!-- CASO QUEIRA ADICIONAR NOVA CRIATURA, COPIE DAQUI... -->
+            <div class="arquivo-bloco">
+                <h3>Entidade #12: "O Vazador"</h3>
+                <p><strong>Agressividade:</strong> Alta<br>
+                <strong>Descrição:</strong> Emite sons de vapor pressurizado e passos ecoando por dentro dos canos.<br>
+                <strong>Protocolo:</strong> Se você ouvir o som mecânico de uma válvula girando nas paredes, <strong>NÃO OLHE PARA TRÁS</strong>. Corra na direção contrária imediatamente.</p>
+            </div>
+            <!-- ...ATÉ AQUI E COLE LOGO ABAIXO -->
         </section>
 
-        <footer style="text-align: center;">
-            <p>Válvula © 1988 - Mantendo a pressão sob controle. <button onclick="logout()" style="width: auto; padding: 2px 10px; font-size: 0.8em; margin-left: 10px;">LOGOUT</button></p>
+        <footer style="text-align: center; margin-top: 40px;">
+            <p>Válvula © 1988 - Mantendo a pressão sob controle. <button onclick="logout()" style="padding: 2px 10px; font-size: 0.8em; margin-left: 10px;">LOGOUT</button></p>
         </footer>
     </div>
 
+    <!-- ================= LÓGICA DO TERMINAL (JAVASCRIPT) ================= -->
     <script>
-        // Banco de dados de usuários e suas permissões configuradas
         const bancoUsuarios = {
             "Agente 032": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
             "Agente 682": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
             "Agente 732": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
             "Agente 823": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
             "Agente 926": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
-            // Exemplo de administrador/mestre para você testar se quiser
             "Diretor Valvula": { senha: "ADMIN_SECRET_1988", nivel: 2 } 
         };
+
+        let nivelUsuarioLogado = 1;
 
         function tentarLogin() {
             const userInput = document.getElementById("usuario").value.trim();
             const passwordInput = document.getElementById("senha").value;
             const erroDiv = document.getElementById("mensagem-erro");
 
-            // Verifica se o usuário existe no banco
-            if (bancoUsuarios[userInput]) {
-                const dadosUsuario = bancoUsuarios[userInput];
-
-                // Verifica se a senha está correta
-                if (dadosUsuario.senha === passwordInput) {
-                    erroDiv.classList.add("oculto"); // Esconde erro se houver
-                    liberarSistema(userInput, dadosUsuario.nivel);
-                    return;
-                }
+            if (bancoUsuarios[userInput] && bancoUsuarios[userInput].senha === passwordInput) {
+                erroDiv.classList.add("oculto");
+                nivelUsuarioLogado = bancoUsuarios[userInput].nivel;
+                liberarSistema(userInput, nivelUsuarioLogado);
+                return;
             }
-
-            // Se falhar em qualquer etapa, exibe erro
             erroDiv.classList.remove("oculto");
-            document.getElementById("senha").value = ""; // Limpa a senha digitada
+            document.getElementById("senha").value = "";
         }
 
         function liberarSistema(nome, nivel) {
-            // Transiciona as telas
             document.getElementById("tela-login").classList.add("oculto");
             document.getElementById("conteudo-sistema").classList.remove("oculto");
-
-            // Atualiza cabeçalho com infos do agente
             document.getElementById("nome-agente").innerText = nome.toUpperCase();
             document.getElementById("nivel-agente").innerText = "NÍVEL " + nivel;
 
-            // Controle de acesso aos documentos baseado no nível
+            // Restrição secreta para o documento ultra confidencial
             if (nivel >= 2) {
                 document.getElementById("doc-secreto").classList.remove("oculto");
             } else {
@@ -248,19 +271,40 @@
             }
         }
 
+        // Lógica de navegação dos diretórios
+        function abrirDiretorio(idDiretorio) {
+            // Oculta todas as seções de arquivos primeiro
+            document.getElementById("dir-docs").classList.add("oculto");
+            document.getElementById("dir-levels").classList.add("oculto");
+            document.getElementById("dir-entities").classList.add("oculto");
+
+            // Abre apenas o diretório clicado
+            if(idDiretorio === 'docs') document.getElementById("dir-docs").classList.remove("oculto");
+            if(idDiretorio === 'levels') document.getElementById("dir-levels").classList.remove("oculto");
+            if(idDiretorio === 'entities') document.getElementById("dir-entities").classList.remove("oculto");
+            
+            // Rola a página para o início do diretório aberto
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function voltarAoMenu() {
+            // Oculta os diretórios para focar visualmente no menu superior
+            document.getElementById("dir-docs").classList.add("oculto");
+            document.getElementById("dir-levels").classList.add("oculto");
+            document.getElementById("dir-entities").classList.add("oculto");
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
         function logout() {
-            // Limpa os campos e reseta a tela
             document.getElementById("usuario").value = "";
             document.getElementById("senha").value = "";
+            voltarAoMenu();
             document.getElementById("tela-login").classList.remove("oculto");
             document.getElementById("conteudo-sistema").classList.add("oculto");
         }
 
-        // Permite apertar "Enter" no teclado para logar
         document.getElementById("senha").addEventListener("keyup", function(event) {
-            if (event.key === "Enter") {
-                tentarLogin();
-            }
+            if (event.key === "Enter") tentarLogin();
         });
     </script>
 </body>
