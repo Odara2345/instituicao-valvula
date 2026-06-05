@@ -1,357 +1,358 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SISTEMA VÁLVULA - DIRETÓRIOS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL V.A.L.V.U.L.A. - BANCO DE DADOS</title>
     <style>
-        /* Estilo Retro Terminal */
-        body {
-            background-color: #0a0a0a;
-            color: #33ff33;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
-            text-shadow: 0 0 5px #33ff33;
-        }
-
-        /* Linhas de Varredura CRT */
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 10;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        header, section, .terminal-box {
-            border: 1px solid #33ff33;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
-            background-color: #0d0d0d;
-        }
-
-        h1, h2, h3 {
-            text-transform: uppercase;
-        }
-        h1, h2 { text-align: center; }
-
-        input[type="text"], input[type="password"] {
-            background-color: #000;
-            border: 1px solid #33ff33;
-            color: #33ff33;
-            font-family: 'Courier New', monospace;
-            padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            outline: none;
-        }
-
-        button {
-            background-color: #33ff33;
-            color: #0a0a0a;
-            border: none;
-            padding: 10px 20px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        button:hover { background-color: #22aa22; }
-
-        .menu-item {
-            display: block;
-            margin: 12px 0;
-            color: #33ff33;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-            width: fit-content;
-        }
-
-        .menu-item:hover {
-            background-color: #33ff33;
-            color: #0a0a0a;
-        }
-
-        .alerta {
-            color: #ff3333;
-            text-shadow: 0 0 5px #ff3333;
-            animation: piscar 1s infinite;
-        }
-
-        .sucesso { color: #33ff33; }
-        .oculto { display: none !important; }
-
-        .tarja-preta {
-            background-color: #33ff33;
-            color: #33ff33;
-            transition: color 0.3s ease;
-        }
-        .tarja-preta:hover { color: #000; }
-
-        /* ================= CÓDIGO DA ORGANIZAÇÃO DO LAYOUT EM COLUNAS ================= */
-        .arquivo-bloco {
-            border: 1px solid #22aa22;
-            padding: 15px;
+        /* ESTILIZAÇÃO DO LOGO INTERATIVO */
+        .header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
             margin-bottom: 30px;
-            display: flex; /* Transforma o bloco em um container flexível */
-            justify-content: space-between;
+            padding: 15px;
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+        }
+
+        .valve-circle {
+            width: 60px;
+            height: 60px;
+            border: 4px double var(--neon-green);
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-border 3s infinite ease-in-out;
+        }
+
+        .valve-core {
+            width: 30px;
+            height: 30px;
+            background: var(--neon-green);
+            border-radius: 3px;
+            transform: rotate(45deg);
+            animation: spin-valve 20s infinite linear;
+        }
+
+        .header-text h1 {
+            font-family: 'Courier New', monospace;
+            font-size: 1.8rem;
+            margin: 0;
+            color: var(--neon-green);
+            text-shadow: 0 0 8px var(--neon-green);
+            letter-spacing: 2px;
+        }
+
+        .header-text p {
+            font-size: 0.85rem;
+            margin: 5px 0 0 0;
+            color: #888;
+            letter-spacing: 1px;
+        }
+
+        @keyframes spin-valve {
+            from { transform: rotate(45deg); }
+            to { transform: rotate(405deg); }
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 65, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 65, 0.6); }
+        }
+
+        /* CONFIGURAÇÕES GERAIS E CORES (VIBE TERMINAL) */
+        :root {
+            --bg-color: #0a0c0a;
+            --panel-color: #121612;
+            --neon-green: #00ff41;
+            --text-color: #d0d7d0;
+            --border-color: #253025;
+            --alert-red: #ff3333;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* ABAS DE NAVEGAÇÃO */
+        .abas-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .aba-botao {
+            background: #181e18;
+            color: #668866;
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .aba-botao:hover {
+            color: var(--neon-green);
+            background: #1c241c;
+        }
+
+        .aba-botao.ativa {
+            background: var(--panel-color);
+            color: var(--neon-green);
+            border-bottom: 2px solid var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.1);
+        }
+
+        .diretorio-conteudo {
+            display: none;
+        }
+
+        .diretorio-conteudo.ativo {
+            display: block;
+        }
+
+        /* ARQUIVOS DO DIRETÓRIO (LAYOUT DUAS COLUNAS) */
+        .arquivo-bloco {
+            background-color: var(--panel-color);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
             align-items: flex-start;
-            gap: 20px; /* Dá espaço entre o texto e a imagem */
-            background-color: #050505;
         }
 
-        /* Coluna do Texto */
         .arquivo-texto {
-            flex: 1; /* Ocupa o espaço máximo disponível na esquerda */
+            flex: 1;
         }
 
-        /* Coluna da Imagem */
+        .arquivo-texto h3 {
+            color: var(--neon-green);
+            margin-top: 0;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+            font-size: 1.15rem;
+        }
+
+        .id-tag {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 10px;
+            display: block;
+        }
+
         .arquivo-media {
-            width: 250px; /* Largura fixa para que todas as imagens fiquem do mesmo tamanho */
-            min-width: 250px;
+            width: 320px;
+            flex-shrink: 0;
             text-align: center;
         }
 
-        /* Estilo da Imagem Retro */
         .arquivo-media img {
             width: 100%;
             height: auto;
-            border: 1px solid #33ff33;
-            /* Filtros para deixar a imagem parecendo um monitor de fósforo verde antigo */
-            filter: grayscale(100%) brightness(90%) contrast(140%);
-            box-shadow: 0 0 8px rgba(51, 255, 51, 0.4);
+            border: 1px solid var(--border-color);
+            filter: grayscale(30%) contrast(120%);
         }
 
         .legenda-imagem {
-            font-size: 0.75em;
+            font-size: 0.75rem;
+            color: #668866;
             margin-top: 5px;
-            color: #22aa22;
             text-transform: uppercase;
         }
 
-        @keyframes piscar {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
+        /* SISTEMA ESTILO EXCEL PARA OS VETORES */
+        .tabela-excel {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85rem;
+        }
+
+        .tabela-excel td {
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+        }
+
+        .tabela-excel td:first-child {
+            background-color: #161d16;
+            color: var(--neon-green);
+            font-weight: bold;
+            width: 30%;
+        }
+
+        /* ALERTAS ESPECIAIS */
+        .alerta-box {
+            border: 1px solid var(--alert-red);
+            background: rgba(255, 51, 51, 0.05);
+            color: var(--alert-red);
+            padding: 12px;
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .arquivo-bloco { flex-direction: column; }
+            .arquivo-media { width: 100%; }
+            .abas-container { flex-direction: column; gap: 5px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="tela-login" class="terminal-box" style="max-width: 450px; margin: 10% auto;">
-        <h2>=== ACESSO AO SISTEMA ===</h2>
-        <p style="text-align: center; font-size: 0.8em;">DIRETRIZ GOVERNAMENTAL DE SEGURANÇA V-DOS</p>
-        <hr style="border-color: #33ff33;">
-        
-        <div id="mensagem-erro" class="alerta oculto" style="text-align: center; margin-bottom: 15px;">
-            [ERRO: CREDENCIAIS INVÁLIDAS / ACESSO NEGADO]
+    <div class="header-logo">
+        <div class="valve-circle">
+            <div class="valve-core"></div>
         </div>
-
-        <label for="usuario">IDENTIFICAÇÃO DO AGENTE:</label>
-        <input type="text" id="usuario" placeholder="Ex: Agente 000" autocomplete="off">
-
-        <label for="senha">CHAVE DE CRIPTOGRAFIA (SENHA):</label>
-        <input type="password" id="senha" placeholder="••••••••••••">
-
-        <button onclick="tentarLogin()" style="width: 100%;">Executar Autenticação</button>
+        <div class="header-text">
+            <h1>SISTEMA DE ARQUIVOS V.A.L.V.U.L.A.</h1>
+            <p>CONEXÃO ESTÁVEL // INTRUSÃO DETECTADA // DIRETÓRIOS ATUALIZADOS</p>
+        </div>
     </div>
 
+    <div class="abas-container">
+        <button class="aba-botao ativa" onclick="mudarAba('documentos')">/DOCUMENTOS_CORP</button>
+        <button class="aba-botao" onclick="mudarAba('niveis')">/LEVELS_MAPEADOS</button>
+        <button class="aba-botao" onclick="mudarAba('entidades')">/ENTITIES_DATA</button>
+    </div>
 
-    <div id="conteudo-sistema" class="oculto">
-        <header>
-            <h1>=== INSTITUIÇÃO VÁLVULA ===</h1>
-            <p style="text-align: center;">SISTEMA OPERACIONAL V-DOS v4.02 — LOGADO COMO: <span id="nome-agente" class="sucesso"></span></p>
-            <p style="text-align: center;">NÍVEL DE ACESSO DO USUÁRIO: <span id="nivel-agente" class="sucesso"></span></p>
-        </header>
-
-        <section>
-            <h2>Menu de Diretórios</h2>
-            <div style="border-bottom: 1px solid #33ff33; padding-bottom: 5px; margin-bottom: 10px;">
-                C:\VALVULA_CORE\> dir
+    <div id="documentos" class="diretorio-conteudo ativo">
+        
+        <div class="arquivo-bloco">
+            <div class="arquivo-texto">
+                <h3>DOC-01: CÓDIGO DE SEGURANÇA E PROTOCOLO DE INTRUSÃO (CLASSE 1)</h3>
+                <span class="id-tag">ID: V-PROT-101-REV82 | Emissor: F.C.O. (Força de Contenção e Orientação)</span>
+                <p style="color: var(--neon-green); font-size: 0.8rem;">[CONTEÚDO SEGURO — REPRODUÇÃO AUTORIZADA APENAS PARA FUNCIONÁRIOS RECRUTADOS]</p>
+                <p>Para garantir que o seu primeiro turno não seja o seu último, todo Prospector de Campo de Classe 1 deve memorizar o Protocolo dos Três Pilares Liminares antes de cruzar o Portão P.I.F.:</p>
+                <p><strong>1. A Regra dos 180 Segundos (Estática Condenatória):</strong> Devido ao mau funcionamento do tecido da criação, a matéria inerte nas Backrooms tende a tentar se estabilizar assimilando o que está ao redor. Se você permanecer completamente estático no mesmo quadrante por mais de 3 minutos, as propriedades do gesso e do drywall começarão a clipar com as suas botas. Mantenha-se em movimento. Se precisar descansar, faça-o em passagens de transição ativa (portas abertas).</p>
+                <p><strong>2. Navegação Cega por Áudio:</strong> O zumbido elétrico de $60\text{ Hz}$ é a sua única bússola de realidade. Se o som cessar abruptamente ou a frequência subir para níveis inaudíveis, você entrou em uma zona de Vácuo Acústico. Interrompa a coleta de Liminum imediatamente, dê meia-volta e caminhe na direção oposta até que o chiado retorne.</p>
+                <p><strong>3. Gerenciamento de Nostalgia:</strong> Se você avistar objetos pessoais da sua infância (um brinquedo antigo, uma poltrona idêntica à da sua avó) dispostos no meio dos corredores vazios, não se aproxime. Isso indica que a energia do Nexus do seu próprio corpo está reagindo com o ambiente, criando uma armadilha cognitiva. Ative o rádio e mude de vetor.</p>
             </div>
-            
-            <span class="menu-item" onclick="abrirDiretorio('docs')">[DIR] 1. DOCUMENTOS_OFICIAIS (/DOCS)</span>
-            <span class="menu-item" onclick="abrirDiretorio('levels')">[DIR] 2. NIVEIS_MAPEADOS (/LEVELS)</span>
-            <span class="menu-item" onclick="abrirDiretorio('entities')">[DIR] 3. BANCO_DE_ENTIDADES (/ENTITY)</span>
-        </section>
+        </div>
 
-        <section id="dir-docs" class="oculto">
-            <button onclick="voltarAoMenu()">[..] Voltar ao Diretório Raiz</button>
-            <h2 style="margin-top: 20px;">📂 Diretório: /DOCS</h2>
-            <hr style="border-color: #33ff33; margin-bottom: 20px;">
-
-            <div class="arquivo-bloco">
-                <div class="arquivo-texto">
-                    <h3>ID_DOC: 089-A</h3>
-                    <p><strong>Assunto:</strong> Incidente de Clipping no Setor de Manutenção.<br>
-                    <strong>Status:</strong> Arquivado.<br><br>
-                    <em>"O funcionário relatou que a parede da sala de caldeiras perdeu colisão por 3 segundos. Recomenda-se isolamento da área e uso de medidores de pressão da Válvula."</em></p>
-                </div>
-                <div class="arquivo-media">
-                    <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=250" alt="Setor Caldeiras">
-                    <div class="legenda-imagem">Anexo_089A.IMG</div>
-                </div>
+        <div class="arquivo-bloco">
+            <div class="arquivo-texto">
+                <h3>DOC-02: MANUAL TÉCNICO DE EQUIPAMENTOS PADRÃO (KIT-C1)</h3>
+                <span class="id-tag">ID: V-MAN-EQ-044 | Emissor: D.E.L. (Departamento de Engenharia Liminar)</span>
+                <p>Este documento descreve as especificações e os cuidados com o kit de ferramentas analógicas fornecido para as incursões de extração energética em Farewell.</p>
+                <p><strong>Módulo de Sucção Hidropneumático (M.S.H. Mk-I):</strong> O "Aspirador". Uma mochila de aço galvanizado pesando 25KG equipada com um motor a combustão interna modificado. A mangueira frontal de sucção cria um vácuo quântico que arranca o Liminum bruto das superfícies.<br>
+                <u>Nota técnica:</u> O motor emite um ruído de 95dB. Esse barulho mascara o som de aproximação de anomalias biológicas. Desligue o compressor a cada 10 minutos para fazer uma varredura auditiva do ambiente.</p>
+                <p><strong>Rádio Analógico de Baixa Frequência (V-COMM 80):</strong> Comunicador pesado de cinto com antena retrátil. Opera exclusivamente nas bandas de rádio analógicas permitidas pelo D.M.A. É a sua única ligação com o Supervisor de Classe 3 na superfície. Se o rádio começar a transmitir vozes de crianças ou músicas de época que você não reconhece, mude o seletor para o Canal Emergencial e solicite extração imediata.</p>
+                <p><strong>Farda de Isolamento Cinzenta e Botas Inerciais:</strong> Traje composto por fibra de amianto e lona impermeável para evitar o contato dérmico com a gosma translúcida do Liminum (o contato direto causa desrealização e queima química). As botas possuem solado de indução de frequência que garante aderência firme ao carpete úmido, impedindo que flutuações gravitacionais façam o Prospector cair no teto.</p>
             </div>
+        </div>
 
-            <div class="arquivo-bloco">
-                <div class="arquivo-texto">
-                    <h3>ID_DOC: 102-B</h3>
-                    <p><strong>Assunto:</strong> Suprimentos e Água de Amêndoa.<br>
-                    <strong>Status:</strong> Revisado.<br><br>
-                    <em>"Agentes de campo reportaram lotes adulterados vindo do terminal subterrâneo. Inspecione o lacre antes do consumo."</em></p>
-                </div>
-                <div class="arquivo-media">
-                    <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=250" alt="Suprimentos">
-                    <div class="legenda-imagem">Lote_Suprimentos.IMG</div>
-                </div>
+        <div class="arquivo-bloco">
+            <div class="arquivo-texto">
+                <h3>DOC-03: DIRETRIZ CORPORATIVA SOBRE O VETOR REVERSO</h3>
+                <span class="id-tag">ID: V-DIR-EX-009 | Emissor: Gabinete da Diretora Evelyn Vance (Classe 4)</span>
+                <p style="color: var(--alert-red); font-size: 0.8rem;">[CLASSIFICAÇÃO: ULTRA-SEGRETO — APENAS MEMBROS DA V.A.L.V.U.L.A]</p>
+                <p>Fica estabelecido que todas as equipes do D.P.E. operando em Farewell devem ignorar quaisquer anomalias geográficas que sugiram uma "saída definitiva" das subcamadas.</p>
+                <p>Relatórios recentes indicam que Prospectores estão espalhando rumores sobre uma suposta entidade feminina benevolente (catalogada internamente como Anomalia Valora) que estaria incitando os operários a buscarem um artefato cúbico nos setores mais profundos.</p>
+                <p>Reiteramos que qualquer funcionário pego alterando sua rota de colheita para "investigar mitologias religiosas" ou que for flagrado portando fitas cassete não autorizadas pelo D.A.N. será imediatamente desligado do programa, terá seus bônus confiscados e será encaminhado para as instalações subterrâneas da Mina 09 para integração compulsória no Projeto Chrysalis (Máquinas de Indução). A prioridade absoluta da corporação é o reabastecimento energético de Farewell. O resto é negociável.</p>
             </div>
+        </div>
 
-            <div id="doc-secreto" class="arquivo-bloco oculto">
-                <div class="arquivo-texto">
-                    <h3 class="alerta">ID_DOC: 999-OMEGA [RESTRITO]</h3>
-                    <p><strong>Assunto:</strong> O Experimento de Pressão Humana.<br><br>
-                    <em>"O colapso da realidade nas Backrooms não é um acidente. A Válvula está deliberadamente deixando o vapor dimensional vazar para..." <span class="tarja-preta">[DADO CENSURADO]</span></em></p>
-                </div>
-                <div class="arquivo-media">
-                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=250" alt="Restrito">
-                    <div class="legenda-imagem">CLASSIFIED.IMG</div>
-                </div>
+    </div>
+
+    <div id="niveis" class="diretorio-conteudo">
+        
+        <div class="arquivo-bloco">
+            <div class="arquivo-texto">
+                <h3>SETOR 00: O SAGUÃO AMARELO</h3>
+                <span class="id-tag">Classificação Oficial: NSR-1 (Estável, porém expansivo) | Nomenclatura Interna: O Labirinto de Drywall</span>
+                
+                <table class="tabela-excel">
+                    <tr><td>Área Estimada</td><td>Infinita (Expande-se conforme o consumo de energia em Farewell)</td></tr>
+                    <tr><td>Iluminação</td><td>Lâmpadas Fluorescentes Industriais (Zumbido constante de 60 Hz)</td></tr>
+                    <tr><td>Recursos</td><td>Veios abundantes de Liminum nas bases das paredes</td></tr>
+                    <tr><td>Aviso de Campo</td><td>Carpete úmido. Odor forte de mofo e gesso velho.</td></tr>
+                </table>
+
+                <p><strong>Descrição Operacional:</strong> O Saguão Amarelo é o ponto de entrada principal após a ativação do Portão P.I.F. na Mina 09. O ambiente consiste em uma sequência interminável e não-linear de salas vazias, corredores com ângulos errados e paredes revestidas com papel de parede amarelado e gesso. Não há janelas, não há portas para o exterior e o teto mantém uma altura opressiva de 2,5 metros.</p>
+                <p>O maior perigo neste setor é o desespero psicológico provocado pela repetição visual, conhecido como a Síndrome da Nostalgia Aguda. O Liminum aqui jorra como uma umidade brilhante nas frestas do rodapé. Os Prospectores devem encher seus tanques e retornar rapidamente pelas eclusas demarcadas. Não tente mapear o local; o Saguão Amarelo se reorganiza quando você pisca.</p>
             </div>
-        </section>
-
-        <section id="dir-levels" class="oculto">
-            <button onclick="voltarAoMenu()">[..] Voltar ao Diretório Raiz</button>
-            <h2 style="margin-top: 20px;">📂 Diretório: /LEVELS</h2>
-            <hr style="border-color: #33ff33; margin-bottom: 20px;">
-
-            <div class="arquivo-bloco">
-                <div class="arquivo-texto">
-                    <h3>Nível V-01: "O Saguão Amarelo"</h3>
-                    <p><strong>Classe de Sobrevivência:</strong> Seguro<br>
-                    <strong>Presença de Entidades:</strong> Mínima<br><br>
-                    <strong>Diretrizes:</strong> Evite carpetes úmidos. Mantenha o rádio de comunicação na frequência 440Hz para captar sinais de bueiros e tubulações da Válvula.</p>
-                </div>
-                <div class="arquivo-media">
-                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=250" alt="Saguão Amarelo">
-                    <div class="legenda-imagem">Registro_V01.IMG</div>
-                </div>
+            <div class="arquivo-media">
+                <img src="https://static.wikia.nocookie.net/backrooms/images/8/85/Imagem_de_um_Corredor_ndo_N%C3%ADvel_0.webp" alt="Setor 00">
+                <div class="legenda-imagem">SADO_SETOR_00.IMG</div>
             </div>
+        </div>
 
-            <div class="arquivo-bloco">
-                <div class="arquivo-texto">
-                    <h3>Nível V-02: "Zona de Tubulação Principal"</h3>
-                    <p><strong>Classe de Sobrevivência:</strong> Indeterminada<br>
-                    <strong>Presença de Entidades:</strong> Moderada<br><br>
-                    <strong>Diretrizes:</strong> Calor extremo. Se a temperatura subir mais que 50°C nos medidores portáteis, evacue o corredor imediatamente antes da liberação de vapor.</p>
-                </div>
-                <div class="arquivo-media">
-                    <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=250" alt="Tubulações">
-                    <div class="legenda-imagem">Registro_V02.IMG</div>
-                </div>
+        <div class="arquivo-bloco">
+            <div class="arquivo-texto">
+                <h3>SETOR 37: A SUBLIMIDADE (THE SUBLIMITY)</h3>
+                <span class="id-tag">Classificação Oficial: NSR-3 (Instabilidade Média) | Nomenclatura Interna: O Complexo de Piscinas Hidroterápicas</span>
+                
+                <table class="tabela-excel">
+                    <tr><td>Área Estimada</td><td>Estruturas interconectadas de azulejos brancos</td></tr>
+                    <tr><td>Iluminação</td><td>Luz difusa zenital (Sem fonte aparente, simulando claraboias artificiais)</td></tr>
+                    <tr><td>Recursos</td><td>Liminum em state líquido purificado (Misturado à água)</td></tr>
+                    <tr><td>Aviso de Campo</td><td>Umidade do ar em 98%. Risco de hipotermia e eco acústico severo.</td></tr>
+                </table>
+
+                <p><strong>Descrição Operacional:</strong> A Sublimidade é um setor profundamente bizarro que se assemelha a um complexo infinito de piscinas públicas, banhos termais e corredores de azulejos brancos e limpos, remetendo à estética de spas abandonados ou vestiários escolares. Diferente dos setores de gesso, a Sublimidade exala um silêncio sepulcral, quebrado apenas pelo som gotejante da água morna.</p>
+                <p>A água que preenche as piscinas deste setor contém uma das maiores concentrações de Liminum já registradas pelo D.E.L., porém a extração é perigosa: a névoa úmida acelera o processo de amnésia do D.A.N., fazendo com que os Prospectores esqueçam o caminho de volta em poucos minutos.</p>
+                <p>As botas ancoradoras são vitais aqui, pois a geometria das piscinas frequentemente desafia a gravidade, criando tetos feitos de água que não cai. O Projeto Âncora frequentemente usa as áreas secas da Sublimidade como pontos de descanso temporários devido à ausência quase total de ruído elétrico.</p>
             </div>
-        </section>
-
-        <section id="dir-entities" class="oculto">
-            <button onclick="voltarAoMenu()">[..] Voltar ao Diretório Raiz</button>
-            <h2 style="margin-top: 20px;">📂 Diretório: /ENTITY</h2>
-            <hr style="border-color: #33ff33; margin-bottom: 20px;">
-
-            <div class="arquivo-bloco">
-                <div class="arquivo-texto">
-                    <h3>Entidade #12: "O Vazador"</h3>
-                    <p><strong>Agressiveness:</strong> Alta<br>
-                    <strong>Descrição:</strong> Emite sons de vapor pressurizado e passos ecoando por dentro dos canos.<br><br>
-                    <strong>Protocolo:</strong> Se você ouvir o som mecânico de uma válvula girando nas paredes, <strong>NÃO OLHE PARA TRÁS</strong>. Corra na direção contrária imediatamente.</p>
-                </div>
-                <div class="arquivo-media">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=250" alt="Entidade">
-                    <div class="legenda-imagem">E_12_CAPTURED.IMG</div>
-                </div>
+            <div class="arquivo-media">
+                <img src="data:image/jpeg;base64,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" alt="Setor 37">
+                <div class="legenda-imagem">REGISTRO_SUBLIMITY.IMG</div>
             </div>
-        </section>
+        </div>
 
-        <footer style="text-align: center; margin-top: 40px;">
-            <p>Válvula © 1988 - Mantendo a pressão sob controle. <button onclick="logout()" style="padding: 2px 10px; font-size: 0.8em; margin-left: 10px;">LOGOUT</button></p>
-        </footer>
+    </div>
+
+    <div id="entidades" class="diretorio-conteudo">
+        
+        <div class="arquivo-bloco">
+            <div class="arquivo-texto">
+                <h3>ENTIDADE Nº 03: OS SORRIDENTES (SMILERS)</h3>
+                <span class="id-tag">Habitat Comum: Zonas de Breu Total / Setores de NSR Alto (NSR-3 ou superior)</span>
+                
+                <div class="alerta-box">
+                    [ALERTA VISUAL: SE VOCÊ CONSEGUE VER O SORRISO, ELE JÁ SABE ONDE VOCÊ ESTÁ]
+                </div>
+
+                <p><strong>Descrição Física:</strong> Os Sorridentes não possuem um corpo físico totalmente discernível pela nossa física. Eles se manifestam na escuridão absoluta como um par de olhos arregalados, brilhantes e humanos, posicionados logo acima de uma boca imensa preenchida com dentes afiados e luminescentes, fixados em um sorriso largo e macabro.</p>
+                <p><strong>Comportamento e Biologia:</strong> Esta entidade é atraída diretamente por fontes de luz artificial (como as lanternas dos Prospectores) e pelo som mecânico dos compressores do M.S.H. Eles habitam as esquinas escuras e os corredores sem iluminação das Backrooms. Os Sorridentes são caçadores de emboscada rápidos e agressivos.</p>
+                
+                <p><strong>Protocolo de Enfrentamento e Sobrevivência:</strong></p>
+                <ul>
+                    <li><strong>Não Corra:</strong> Ao avistar um Sorridente no final de um corredor escuro, não entre em pânico e não corra. Movimentos bruscos ativam o instinto de perseguição da entidade.</li>
+                    <li><strong>Contato Visual Mantido:</strong> Desligue a sua lanterna imediatamente se ela estiver apontada diretamente para a criatura. Mantenha os olhos fixos nos dentes brilhantes dela. Caminhe para trás lentamente, sem quebrar o contato visual.</li>
+                    <li><strong>Isca Luminosa:</strong> Jogue uma fonte de luz secundária (como uma lâmpada química ou um sinalizador de magnésio) para o lado oposto de onde você deseja ir. O Sorridente irá priorizar o consumo daquela energia luminosa, dando a você uma janela de 30 segundos para recuar em silêncio.</li>
+                </ul>
+            </div>
+            <div class="arquivo-media">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQEBIPDxAPDw4PDxAQDw0NDQ8NDg0OFhEWFxURFhUYHSggGBolGxUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIANoA6AMBIgACEQEDEQH/xAAcAAEBAAIDAQEAAAAAAAAAAAAAAQIGBAUHAwj/xABQEQEAAAAAAAAAAAAAAAAAAAAA/9oE0oSM2qwreFwN6PiXMaVGeeySg3XwPnC+GbywX6KkWj0wX6wNfwNfghw/Anw8Wp9i6OunN7LkieXzePY69Vpd6H7WHOMb2tJdQNP4a4/Dwvh8fX6Pz8wMvypndfS+mHNYXw97Zp7seXeeVz8CgAAAAAAAAAAAAAAAAAAAAlAsjAsmS4AEABkZSARgMAAAAKiFASIWRAAAAAAAAAAAAAAAAABUQsQM0ZGMQwE+ZiGAAIUCAACAAAAAAAAXAAAAAAAB//9k=" alt="Os Sorridentes">
+                <div class="legenda-imagem">ANOMALIA_03_SMILER.IMG</div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const bancoUsuarios = {
-            "Agente 032": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
-            "Agente 682": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
-            "Agente 732": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
-            "Agente 823": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
-            "Agente 926": { senha: "P6-_KHfQ3Fvdh6Ug8DuYiw", nivel: 1 },
-            "Diretor Valvula": { senha: "ADMIN_SECRET_1988", nivel: 2 } 
-        };
-
-        let nivelUsuarioLogado = 1;
-
-        function tentarLogin() {
-            const userInput = document.getElementById("usuario").value.trim();
-            const passwordInput = document.getElementById("senha").value;
-            const erroDiv = document.getElementById("mensagem-erro");
-
-            if (bancoUsuarios[userInput] && bancoUsuarios[userInput].senha === passwordInput) {
-                erroDiv.classList.add("oculto");
-                nivelUsuarioLogado = bancoUsuarios[userInput].nivel;
-                liberarSistema(userInput, nivelUsuarioLogado);
-                return;
-            }
-            erroDiv.classList.remove("oculto");
-            document.getElementById("senha").value = "";
-        }
-
-        function liberarSistema(nome, nivel) {
-            document.getElementById("tela-login").classList.add("oculto");
-            document.getElementById("conteudo-sistema").classList.remove("oculto");
-            document.getElementById("nome-agente").innerText = nome.toUpperCase();
-            document.getElementById("nivel-agente").innerText = "NÍVEL " + nivel;
-
-            if (nivel >= 2) {
-                document.getElementById("doc-secreto").classList.remove("oculto");
-            } else {
-                document.getElementById("doc-secreto").classList.add("oculto");
-            }
-        }
-
-        function abrirDiretorio(idDiretorio) {
-            document.getElementById("dir-docs").classList.add("oculto");
-            document.getElementById("dir-levels").classList.add("oculto");
-            document.getElementById("dir-entities").classList.add("oculto");
-
-            if(idDiretorio === 'docs') document.getElementById("dir-docs").classList.remove("oculto");
-            if(idDiretorio === 'levels') document.getElementById("dir-levels").classList.remove("oculto");
-            if(idDiretorio === 'entities') document.getElementById("dir-entities").classList.remove("oculto");
+        function mudarAba(idAba) {
+            document.querySelectorAll('.diretorio-conteudo').forEach(el => el.classList.remove('ativo'));
+            document.querySelectorAll('.aba-botao').forEach(el => el.classList.remove('ativa'));
             
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            document.getElementById(idAba).classList.add('ativo');
+            event.currentTarget.classList.add('ativa');
         }
-
-        function voltarAoMenu() {
-            document.getElementById("dir-docs").classList.add("oculto");
-            document.getElementById("dir-levels").classList.add("oculto");
-            document.getElementById("dir-entities").classList.add("oculto");
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        function logout() {
-            document.getElementById("usuario").value = "";
-            document.getElementById("senha").value = "";
-            voltarAoMenu();
-            document.getElementById("tela-login").classList.remove("oculto");
-            document.getElementById("conteudo-sistema").classList.add("oculto");
-        }
-
-        document.getElementById("senha").addEventListener("keyup", function(event) {
-            if (event.key === "Enter") tentarLogin();
-        });
     </script>
 </body>
 </html>
