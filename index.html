@@ -1,162 +1,282 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VÁLVULA SYSTEM - INICIALIZANDO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V.A.L.V.U.L.A. OS - INITIALIZING...</title>
     <style>
-        body {
-            background-color: #0a0a0a;
-            color: #33ff33;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 40px;
-            text-shadow: 0 0 5px #33ff33;
-            overflow: hidden;
+        :root {
+            --neon-green: #00ff41;
+            --dark-green: #002200;
+            --glow-green: rgba(0, 255, 65, 0.25);
+            --bg-black: #040604;
         }
 
-        /* Efeito CRT/Scanlines */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 10px;
+            /* Responsividade fluida de fonte baseada na tela */
+            font-size: clamp(0.75rem, 0.6rem + 0.8vw, 1rem);
+            text-shadow: 0 0 4px var(--glow-green);
+        }
+
+        /* EFEITOS CRT DE MONITOR ANTIGO */
         body::before {
             content: " ";
             display: block;
             position: fixed;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 10;
-            background-size: 100% 2px, 3px 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+            z-index: 9999;
+            background-size: 100% 3px, 3px 100%;
             pointer-events: none;
         }
 
-        .boot-container {
-            max-width: 800px;
-            margin: 0 auto;
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.85) 130%);
+            z-index: 9998;
+            pointer-events: none;
         }
 
-        .boot-text {
-            white-space: pre-wrap;
-            display: inline-block;
-            line-height: 1.4;
+        /* CONTAINER DA BIOS (SE ADAPTA AO COMPUTADOR E AO CELULAR) */
+        #bios-terminal {
+            width: 100%;
+            max-width: 650px; /* Impede de ficar gigante em telas grandes */
+            min-height: 450px;
+            border: 2px solid var(--neon-green);
+            background: #060a06;
+            padding: clamp(15px, 4vw, 30px);
+            box-shadow: 0 0 25px var(--glow-green);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
         }
 
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 18px;
-            background-color: #33ff33;
-            animation: piscar 0.8s infinite;
-            vertical-align: middle;
+        /* CABEÇALHO E ART LOGO */
+        .bios-header {
+            border-bottom: 2px double var(--neon-green);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
         }
 
-        @keyframes piscar {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+        /* Tratamento especial para o ASCII Art não quebrar em telas pequenas */
+        .ascii-logo {
+            font-family: monospace;
+            white-space: pre;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 0 0 8px var(--neon-green);
+            margin-bottom: 10px;
+            font-size: clamp(0.38rem, 0.25rem + 0.9vw, 0.85rem); /* Escala perfeitamente */
+            overflow-x: hidden;
         }
 
-        #logo {
-            margin-top: 30px;
-            font-size: 0.85em;
+        .subtitle {
+            font-size: clamp(0.65rem, 0.55rem + 0.5vw, 0.85rem);
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: var(--neon-green);
+            opacity: 0.9;
+        }
+
+        /* LINHAS DE COMANDO E LOGS */
+        .console-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .log-line {
+            min-height: 18px;
+            word-wrap: break-word;
+        }
+
+        /* BARRA DE PROGRESSO EM CSS */
+        .progress-container {
+            display: none;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            border: 1px solid var(--neon-green);
+            height: 14px;
+            margin-top: 5px;
+            padding: 1px;
+            background: var(--bg-black);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--neon-green);
+            width: 0%;
+            box-shadow: 0 0 8px var(--neon-green);
+            transition: width 0.1s linear;
+        }
+
+        /* ZONA DE DISPARO (BOTÃO DE ENTRADA) */
+        .action-zone {
+            margin-top: 20px;
+            border-top: 1px dashed var(--neon-green);
+            padding-top: 15px;
+            text-align: center;
             display: none;
         }
+
+        .btn-boot {
+            background: var(--neon-green);
+            color: var(--bg-black);
+            border: none;
+            padding: clamp(10px, 2vw, 14px) clamp(20px, 4vw, 35px);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: clamp(0.85rem, 0.75rem + 0.4vw, 1.05rem);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 15px var(--glow-green);
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        .btn-boot:hover {
+            background: #ffffff;
+            box-shadow: 0 0 25px #ffffff;
+            transform: scale(1.02);
+        }
+
+        .blink {
+            animation: cursor-blink 1s infinite steps(2);
+        }
+        @keyframes cursor-blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="boot-container">
-        <span class="boot-text" id="boot-output"></span><span class="cursor"></span>
-    </div>
+    <div id="bios-terminal">
+        <!-- SEÇÃO DA LOGO -->
+        <div class="bios-header">
+            <div class="ascii-logo">
+ ______  _        _  _____   _____ 
+|  __ \ | |      | ||  ___| |  ___|
+| |  | || |      | || |__   | |__  
+| |  | || |      | ||  __|  |  __| 
+| |__| || |_____ | || |___  | |___ 
+|_____/ |_______| _||_____| |_____|</div>
+            <div class="subtitle">VÁLVULA - SISTEMAS DE PRESSÃO DIMENSIONAL</div>
+        </div>
 
-    <div id="logo">
-<pre>
-      _____   _       _  _____   _____
-     |  __ \ | |     | ||  ___| |  ___|
-     | |  | || |     | || |__   | |__
-     | |  | || |     | ||  __|  |  __|
-     | |__| || |_____| || |___  | |___
-     |_____/ |_______|_||_____| |_____|
+        <!-- MENSAGENS DE CARREGAMENTO -->
+        <div class="console-area">
+            <div class="log-line" id="line1"></div>
+            <div class="log-line" id="line2"></div>
+            <div class="log-line" id="line3"></div>
+            <div class="log-line" id="line4"></div>
+            
+            <!-- Barra de Progresso Mecânica -->
+            <div class="progress-container" id="p-container">
+                <span id="progress-text">CARREGANDO MATRIZ DE DADOS... 0%</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="p-fill"></div>
+                </div>
+            </div>
 
-VÁLVULA - SISTEMAS DE PRESSÃO DIMENSIONAL
-</pre>
+            <div class="log-line" id="line5" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+
+        <!-- ENTRADA DO SCRIPT PRINCIPAL -->
+        <div class="action-zone" id="trigger-zone">
+            <a href="sistema.html" class="btn-boot">ACESSAR_MAINFRAME.EXE <span class="blink">_</span></a>
+        </div>
     </div>
 
     <script>
-        // Array com as linhas normais de um PC antigo + os mistérios do RPG
-        const textoBoot = [
-            "ROM BIOS VERSION 1.04 - VALVULA CORP.\n",
-            "COPR. 1985-1988 ALL RIGHTS RESERVED.\n\n",
-            "CPU: INTEL 80386 DX @ 25 MHz\n",
-            "CO-PROCESSOR: WEITEK 3167 NOT DETECTED\n",
-            "CHECKING KEYBOARD............................ OK (101 KEYS)\n",
-            "TESTING EXTENDED RAM: ", // Deixamos sem o '\n' para a contagem acontecer na mesma linha
-            "640 KB BASE MEMORY OK\n",
-            "31744 KB EXTENDED MEMORY OK\n\n",
-            "DETECTING IDE DRIVES...\n",
-            "  PRIMARY MASTER : V-DRIVE HDD 40MB (CYL 733, HEAD 7, SEC 17)\n",
-            "  PRIMARY SLAVE  : NONE\n",
-            "  FLOPPY DRIVE A : 3.5\" 1.44MB DETECTED\n",
-            "  FLOPPY DRIVE B : 5.25\" 1.2MB DETECTED\n\n",
-            "SERIAL PORTS: COM1 (03F8h), COM2 (02F8h)\n",
-            "PARALLEL PORTS: LPT1 (0378h)\n",
-            "--------------------------------------------------\n",
-            "INITIALIZING KERNEL MODULES...\n",
-            "VERIFICANDO INTEGRIDADE DA REALIDADE......... [98%]\n",
-            "ADVERTÊNCIA: FLUTUAÇÃO DE PRESSÃO NO NÍVEL V-01.\n",
-            "CARREGANDO SISTEMA OPERACIONAL V-DOS v4.02...\n",
-            "ESTABELECENDO CONEXÃO SEGURA COM O NÚCLEO VÁLVULA.\n\n",
-            "REDIRECIONANDO PARA TERMINAL DE AUTENTICAÇÃO..."
+        // Mensagens simuladas de varredura mecânica
+        const logs = [
+            "KERNEL ENGINE v4.95 // CORE REBOOT STARTED...",
+            "CONEXÃO ESTABELECIDA COM A MINA 09... SINAL ESTÁVEL",
+            "VERIFICANDO ESTABILIDADE DA ENERGIA LIMINAR... DE ACORDO",
+            "SINCRONIZANDO VETORES DE PRESSÃO DO PORTÃO P.I.F..."
         ];
 
-        const outputDiv = document.getElementById('boot-output');
-        const logoDiv = document.getElementById('logo');
-        let linhaAtual = 0;
-
-        function printarLinha() {
-            if (linhaAtual < textoBoot.length) {
-                
-                // MECÂNICA ESPECIAL: Efeito de contagem da memória RAM simulada
-                if (textoBoot[linhaAtual] === "TESTING EXTENDED RAM: ") {
-                    outputDiv.innerHTML += "TESTING EXTENDED RAM: ";
-                    let contador = 0;
-                    
-                    function contarRAM() {
-                        if (contador <= 31744) {
-                            // Atualiza apenas os números da RAM simulando o teste antigo
-                            outputDiv.innerHTML = outputDiv.innerHTML.replace(/\d+ KB OK/, "") + contador + " KB OK";
-                            contador += 1024; // Sobe de 1MB em 1MB
-                            setTimeout(contarRAM, 30);
-                        } else {
-                            outputDiv.innerHTML += "\n";
-                            linhaAtual++;
-                            setTimeout(printarLinha, 200);
-                        }
-                    }
-                    contarRAM();
-                    return; // Pausa o fluxo normal para rodar o loop da RAM
-                }
-
-                // Fluxo normal para as outras linhas
-                outputDiv.innerHTML += textoBoot[linhaAtual];
-                linhaAtual++;
-                
-                // Variabilidade no tempo de resposta para parecer um carregamento real do HD
-                let delay = Math.random() * 300 + 80;
-                if (textoBoot[linhaAtual - 1].includes("DETECTING") || textoBoot[linhaAtual - 1].includes("VERIFICANDO")) {
-                    delay = 1200; // Demora um pouco mais nessas partes para dar suspense
-                }
-                
-                setTimeout(printarLinha, delay); 
-            } else {
-                // Fim do texto, mostra o logo ASCII da instituição
-                setTimeout(() => {
-                    logoDiv.style.display = 'block';
-                }, 800);
-                
-                // Envia para a página de login
-                setTimeout(() => {
-                    window.location.href = 'sistema.html'; 
-                }, 4500);
+        function typeLine(index, callback) {
+            if (index >= logs.length) {
+                callback();
+                return;
             }
+
+            let text = logs[index];
+            let element = document.getElementById(`line${index + 1}`);
+            let charIndex = 0;
+
+            let interval = setInterval(() => {
+                if (charIndex < text.length) {
+                    element.innerHTML += text.charAt(charIndex);
+                    charIndex++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        typeLine(index + 1, callback);
+                    }, 350); // Intervalo dramático
+                }
+            }, 25);
         }
 
-        // Inicia a animação ao carregar a página
-        window.onload = printarLinha;
+        // Simulação gráfica da barra de carregamento
+        function rodarBarraProgresso() {
+            const container = document.getElementById("p-container");
+            const fill = document.getElementById("p-fill");
+            const text = document.getElementById("progress-text");
+            
+            container.style.display = "block";
+            let porcentagem = 0;
+
+            let interval = setInterval(() => {
+                if (porcentagem < 100) {
+                    porcentagem += Math.floor(Math.random() * 8) + 2; // Avanços irregulares simulando processamento
+                    if (porcentagem > 100) porcentagem = 100;
+                    fill.style.width = porcentagem + "%";
+                    text.innerText = `DESCOMPRIMINDO DIRETÓRIOS DE FAREWELL... ${porcentagem}%`;
+                } else {
+                    clearInterval(interval);
+                    
+                    // Mensagem final de sucesso
+                    setTimeout(() => {
+                        document.getElementById("line5").innerText = "SISTEMA INTEGRADO. ACESSO CONCEDIDO ÀS SUB-CAMADAS.";
+                        document.getElementById("trigger-zone").style.display = "block";
+                    }, 400);
+                }
+            }, 80);
+        }
+
+        // Dispara a inicialização assim que a página renderizar
+        window.onload = () => {
+            setTimeout(() => {
+                typeLine(0, rodarBarraProgresso);
+            }, 400);
+        };
     </script>
 </body>
 </html>
