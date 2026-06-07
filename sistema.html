@@ -106,6 +106,7 @@
             height: 100%;
             grid-template-columns: 200px 1fr;
             gap: 20px;
+            transition: filter 0.3s ease, opacity 0.3s ease;
         }
 
         /* PAINEL LATERAL DE DIRETÓRIOS (SISTEMA DE ARQUIVOS) */
@@ -128,7 +129,6 @@
         .folder-btn {
             background: transparent;
             border: 1px solid transparent;
-            color: var(--text-color);
             text-align: left;
             font-family: 'Courier New', monospace;
             padding: 6px 10px;
@@ -193,31 +193,6 @@
             margin-bottom: 15px;
         }
 
-        /* CORREÇÃO DO LAYOUT DAS IMAGENS */
-        .media-container {
-            margin-top: 20px;
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            background: #050705;
-            display: inline-block;
-            max-width: 100%;
-        }
-
-        .media-container img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            max-height: 400px;
-            filter: grayscale(20%) contrast(110%);
-        }
-
-        .media-title {
-            font-size: 0.75rem;
-            color: #668866;
-            margin-top: 8px;
-            text-align: center;
-        }
-
         /* TABELA ESTILO EXCEL DENTRO DO COMPUTADOR */
         .excel-grid {
             width: 100%;
@@ -255,13 +230,102 @@
             display: block;
         }
 
+        /* TEXTO ANIMADO EM VERMELHO CENSURADO */
+        .corrupted-link {
+            color: var(--alert-red);
+            font-weight: bold;
+            text-decoration: underline;
+            cursor: pointer;
+            display: inline-block;
+            margin: 15px 0;
+            animation: pulse-glitch 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-glitch {
+            0% { opacity: 0.4; text-shadow: 2px 0 0 rgba(255,0,0,0.5); }
+            50% { opacity: 1; text-shadow: -2px 0 0 rgba(255,0,0,0.7); }
+            100% { opacity: 0.6; text-shadow: 1px 1px 0 rgba(255,0,0,0.4); }
+        }
+
+        /* POPUP DE SUSTO/GLITCH TOTALMENTE NÍTIDO E EM DESTAQUE */
+        #glitch-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.6);
+            width: 420px;
+            background: #000000;
+            border: 3px solid var(--alert-red);
+            box-shadow: 0 0 60px rgba(255, 0, 0, 0.9);
+            z-index: 10005; /* Fica acima de qualquer desfoque */
+            padding: 25px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Ativação do efeito de abertura dramático */
+        #glitch-popup.glitch-active {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            animation: popup-shake 0.4s infinite;
+        }
+
+        .popup-title {
+            color: var(--alert-red);
+            font-weight: bold;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            letter-spacing: 4px;
+        }
+
+        @keyframes popup-shake {
+            0% { box-shadow: 0 0 60px rgba(255, 0, 0, 0.9); clip-path: inset(0 0 0 0); }
+            20% { clip-path: inset(1% 0 4% 0); }
+            40% { transform: translate(-49%, -51%) scale(1.01); }
+            60% { clip-path: inset(0 2% 0 1%); }
+            80% { transform: translate(-51%, -49%) scale(0.99); }
+            100% { box-shadow: -5px 5px 35px rgba(255, 0, 0, 1); clip-path: inset(0 0 0 0); }
+        }
+
+        .btn-glitch {
+            background: transparent;
+            border: 1px solid var(--alert-red);
+            color: var(--alert-red);
+            padding: 8px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .btn-glitch:hover {
+            background: var(--alert-red);
+            color: #000;
+        }
+
         /* CUSTOM SCROLLBAR DO TERMINAL */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: var(--bg-black); }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border: 1px solid var(--neon-green); }
+
+        /* ESTADO CONGELADO - AFETA APENAS O COMPUTADOR DE FUNDO, PRESULVANDO O POPUP NITIDO */
+        .system-frozen {
+            pointer-events: none !important;
+            filter: grayscale(0.4) contrast(1.3) brightness(0.3) blur(3px) !important;
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body>
+
+    <div id="glitch-popup">
+        <div class="popup-title">Achei você :)</div>
+        <div style="color: #880000; font-size: 0.85rem; margin-bottom: 12px; font-weight: bold; letter-spacing: 1px;">[SISTEMA OPERACIONAL CORROMPIDO PELO FILTRO]</div>
+        <button class="btn-glitch" onclick="fecharGlitch()">REINICIAR_KERNEL.ERR</button>
+    </div>
 
     <div id="bios-container">
         <div class="terminal-line">V.A.L.V.U.L.A. BIOS V4.04 (C) 1998-2026</div>
@@ -292,7 +356,8 @@
             <button class="folder-btn" onclick="navegarFileSystem('dir-entidades')">> /ANOMALIAS_LOG</button>
             
             <div class="disk-header" style="margin-top:auto; font-size:0.75rem; border-top: 1px solid var(--border-color); color: #668866; padding-top:10px;">
-                AGENTE LOGADO:<br><span id="display-agente" style="color:var(--neon-green)">---</span>
+                AGENTE: <span id="display-agente" style="color:var(--neon-green)">---</span><br>
+                ACESSO: <span style="color:var(--neon-green)">NÍVEL 2</span>
             </div>
         </div>
 
@@ -311,8 +376,8 @@
                         <div class="metadata">ID: V-PROT-101-REV82 | EMISSOR: F.C.O. | DESTINATÁRIOS: PROSPECTORES CLASSE 1</div>
                         <p style="color: var(--neon-green); font-weight: bold;">[CONTEÚDO SEGURO — REPRODUÇÃO AUTORIZADA APENAS PARA FUNCIONÁRIOS RECRUTADOS]</p>
                         <p>Para garantir que o seu primeiro turno não seja o seu último, todo Prospector de Classe 1 deve memorizar o Protocolo dos Três Pilares Liminares antes de cruzar o Portão P.I.F.:</p>
-                        <p><strong>1. A Regra dos 180 Segundos (Estática Condenatória):</strong> Devido ao mau funcionamento do tecido da criação, a matéria inerte nas Backrooms tende a tentar se estabilizar assimilando o que está ao redor. Se você permanecer completamente estático no mesmo quadrante por mais de 3 minutos, as propriedades do gesso e do drywall começarão a clipar com as suas botas. Mantenha-se em movimento. Se precisar descansar, faça-o em passagens de transição ativa (portas abertas).</p>
-                        <p><strong>2. Navegação Cega por Áudio:</strong> O zumbido elétrico de $60\text{ Hz}$ é a sua única bússola de realidade. Se o som cessar abruptamente ou a frequência subir para níveis inaudíveis, você entrou em uma zona de Vácuo Acústico. Interrompa a coleta de Liminum imediatamente, dê meia-volta e caminhe na direção oposta até que o chiado retorne.</p>
+                        <p><strong>1. A Regra dos 180 Segundos (Estática Condenatória):</strong> Devido ao mau funcionamento do tecido da criação, a matéria inerte nas Backrooms tende a tentar se estabilizar assimilando o que está ao redor. Se você permanecer completamente estático no mesmo quadrante por mais de 3 minutos, as propriedades do gesso e do drywall começarão a clipar com as suas botas. Mantenha-se em movimento. Se precisar descansar, faça-o em passagens de transição activa (portas abertas).</p>
+                        <p><strong>2. Navegação Cega por Áudio:</strong> O zumbido elétrico de 60 Hz é a sua única bússola de realidade. Se o som cessar abruptamente ou a frequência subir para níveis inaudíveis, você entrou em uma zona de Vácuo Acústico. Interrompa a coleta de Liminum imediatamente, dê meia-volta e caminhe na direção oposta até que o chiado retorne.</p>
                         <p><strong>3. Gerenciamento de Nostalgia:</strong> Se você avistar objetos pessoais da sua infância (um brinquedo antigo, uma poltrona idêntica à da sua avó) dispostos no meio dos corredores vazios, não se aproxime. Isso indica que a energia do Nexus do seu próprio corpo está reagindo com o ambiente, criando uma armadilha cognitiva. Ative o rádio e mude de vetor.</p>
                     </div>
 
@@ -321,7 +386,7 @@
                         <div class="metadata">ID: V-MAN-EQ-044 | EMISSOR: D.E.L. (Departamento de Engenharia Liminar)</div>
                         <p>Este documento descreve as especificações e os cuidados com o kit de ferramentas analógicas fornecido para as incursões de extração energética em Farewell.</p>
                         <p><strong>Módulo de Sucção Hidropneumático (M.S.H. Mk-I):</strong> O "Aspirador". Uma mochila de aço galvanizado pesando 25KG equipada com um motor a combustão interna modificado. A mangueira frontal de sucção cria um vácuo quântico que arranca o Liminum bruto das superfícies.<br>
-                        <em>Nota técnica:</em> O motor emite um ruído de 95dB Esse barulho mascara o som de aproximação de anomalias biológicas. Desligue o compressor a cada 10 minutos para fazer uma varredura auditiva do ambiente.</p>
+                        <em>Nota técnica:</em> O motor emite um ruído de 95dB Esse barulho mascara o som de aproximação de anomalias biológicas. Desligue o compressor a cada 10 minutos para fazer uma varredura auditiva del ambiente.</p>
                         <p><strong>Rádio Analógico de Baixa Frequência (V-COMM 80):</strong> Comunicador pesado de cinto com antena retrátil. Opera exclusivamente nas bandas de rádio analógicas permitidas pelo D.M.A. É a sua única ligação com o Supervisor de Classe 3 na superfície. Se o rádio começar a transmitir vozes de crianças ou músicas de época que você não reconhece, mude o seletor para o Canal Emergencial e solicite extração imediata.</p>
                         <p><strong>Farda de Isolamento Cinzenta e Botas Inerciais:</strong> Traje composto por fibra de amianto e lona impermeável para evitar o contato dérmico com a gosma translúcida do Liminum (o contato direto causa desrealização e queima química). As botas possuem solado de indução de frequência que garante aderência firme ao carpete úmido, impedindo que flutuações gravitacionais façam o Prospector cair no teto.</p>
                     </div>
@@ -352,11 +417,6 @@
 
                         <p><strong>Descrição Operacional:</strong> O Saguão Amarelo é o ponto de entrada principal após a ativação do Portão P.I.F. na Mina 09. O ambiente consiste em uma sequência interminável e não-linear de salas vazias, corredores com ângulos errados e paredes revestidas com papel de parede amarelado e gesso. Não há janelas, não há portas para o exterior e o teto mantém uma altura opressiva de 2,5 metros.</p>
                         <p>O maior perigo neste setor é o desespero psicológico provocado pela repetição visual, conhecido como a Síndrome da Nostalgia Aguda. O Liminum aqui jorra como uma umidade brilhante nas frestas do rodapé. Os Prospectores devem encher seus tanques e retornar rapidamente pelas eclusas demarcadas. Não tente mapear o local; o Saguão Amarelo se reorganiza quando você pisca.</p>
-                        
-                        <div class="media-container">
-                            <img src="https://static.wikia.nocookie.net/backrooms/images/8/85/Imagem_de_um_Corredor_ndo_N%C3%ADvel_0.webp" alt="Saguão Amarelo">
-                            <div class="media-title">CAPTURADO_SETOR_00.RAW</div>
-                        </div>
                     </div>
 
                     <div class="file-block">
@@ -370,14 +430,9 @@
                             <tr><td>Aviso de Campo</td><td>Umidade do ar em 98%. Risco de hipotermia e eco acústico severo.</td></tr>
                         </table>
 
-                        <p><strong>Descrição Operacional:</strong> A Sublimidade é um setor profundamente bizarro que se assemelha a um complexo infinito de piscinas públicas, banhos termais e corredores de azulejos brancos e limpos, remetendo à estética de spas abandonados ou vestiários escolares. Diferente dos setores de gesso, a Sublimidade exala um silêncio sepulcral, quebrado apenas pelo som gotejante da água morna.</p>
+                        <p><strong>Descrição Operacional:</strong> A Sublimidade é um sector profundamente bizarro que se assemelha a um complexo infinito de piscinas públicas, banhos termais e corredores de azulejos brancos e limpos, remetendo à estética de spas abandonados ou vestiários escolares. Diferente dos sectores de gesso, a Sublimidade exala um silêncio sepulcral, quebrado apenas pelo som gotejante da água morna.</p>
                         <p>A água que preenche as piscinas deste setor contém uma das maiores concentrações de Liminum já registradas pelo D.E.L., porém a extração é perigosa: a névoa úmida acelera o processo de amnésia do D.A.N., fazendo com que os Prospectores esqueçam o caminho de volta em poucos minutos.</p>
                         <p>As botas ancoradoras são vitais aqui, pois a geometria das piscinas frequentemente desafia a gravidade, criando tetos feitos de água que não cai. O Projeto Âncora frequentemente usa as áreas secas da Sublimidade como pontos de descanso temporários devido à ausência quase total de ruído elétrico.</p>
-                        
-                        <div class="media-container">
-                            <img src="data:image/jpeg;base64,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黄金E1h4rBEVryWyNMyTNjLYy7qjWLQaNdU/bah6ajf8R4pQazvMoOTmw1PFUXM8lt4mPNZrx6IKDm7ENzbK0RdVpT1e0oAkW92VJ0ormtjCtrE7n6LEMWtJTmgG+W9AjxQbXdyAYgH0G8LSDUF7Cf2RHEqrpFpuruEH5ZAG0+QVXSkRaSDawO/MAi/alHO4oWVSMK3ichyHkqsWaCbghSBWDRDkdwQAotOEWHJZq0YR1QgcEeaZ5tkiAUTVHBBC/BIt4ptZPXggGBZJJ1eHspKiDDbb3FEDgoNKmCoJBwqLjb6I7UFpv2H0RmsG4IJgXHb6I7QgtYK5bD6KwxnPvKCUI4b/Ne6fhWymj2cXyH/dT0XhsLLC58PovePwzZTR0POQ/+RyzexZyupUITc8z5qaDDme3zW0fP/SR9Zn/rds4lYxWxpskyOt/ePqsqUcPJL1IHVFhdRVSjxlRXrP4N5Yj/ALX/ALFyWMxX5hbUUrkb+C6z8G/kxB4x+T1wGPlpN2pODsvzMNHGY5QBKwP1SLVqRbuVvE4wSdZ08bSaktILSDXK6paUI1cCP8Bv7nLM6ftH8W7m/DeGfM5U7VnxS1wXNdDNDwSOPxIY3/qY13mEyS389jP1x0fQzQ+He7E6+HhdUlIGtGw0G4VFsN6HwDo7b+Eisg9S4DohoVsbXfGhZreXUaR6K7jOjeEcCHYeEXp/ZsI7shVbWmtDYRscmvBAGmSTVsG6xoN1cllGj6O4R+ZYK7i0fRImuE0Z+H2CkeWshYabmtoOX1WLpP8NsKx5aY2VrsYized99yGz0vBQMkc74bK7wxtR3URdNToaxYyNteIaO0UCNXjU34cYa9GMH6R9Vg4noTh2XDRTsXsc5h1SSyMdi4/S+OgaS1wjpYgC4pax80FzzOhbBkAOf/iS6Z/RxmN1w0Z0vRJJZ6Xw+mEkkkSkhEkkilU9U0kE1DU9Ukkyh09UkkyiaWq6pJJlE9XUSSSS6G6oKpJInUOpakklyN/E9Xq/7UkkQ/V1v9S6HD6OZsZlz8kklnZ/WpP8Amr38Kxuz09VUxbGAdUU/V/1SSW9v/YmMTY+vXw7L/VLpDh2NaHBoAtb9S5/STG6zDQD6pJK+8/1iT1gY/Emt3eA+qqS4k+7/ZJJZ668WNP4uQZfX7LAn0nKf73gPskksiYvYHSsoBGsTftR9bWeayOHYkkg6XRpGo07VrtF80klFf/Z" alt="Sublimidade">
-                            <div class="media-title">SUBLIME_DEPTHS.RAW</div>
-                        </div>
                     </div>
 
                 </div>
@@ -398,13 +453,34 @@
                         <p><strong>Protocolo de Enfrentamento e Sobrevivência:</strong></p>
                         <ul>
                             <li><strong>Não Corra:</strong> Ao avistar um Sorridente no final de um corredor escuro, não entre em pânico e não corra. Movimentos bruscos ativam o instinto de perseguição da entidade.</li>
-                            <li><strong>Contato Visual Mantido:</strong> Desligue a sua lanterna imediatamente se ela estiver apontada diretamente para a criatura. Mantenha os olhos fixos nos dentes brilhantes dela. Caminhe para trás lentamente, sem quebrar o contato visual.</li>
+                            <li><strong>Contato Visual Mantido:</strong> Desligue a sua lanterna imediatamente si ela estiver apontada diretamente para a criatura. Mantenha os olhos fixos nos dentes brilhantes dela. Caminhe para trás lentamente, sem quebrar o contato visual.</li>
                             <li><strong>Isca Luminosa:</strong> Jogue uma fonte de luz secundária (como uma lâmpada química ou um sinalizador de magnésio) para o lado oposto de onde você deseja ir. O Sorridente irá priorizar o consumo daquela energia luminosa, dando a você uma janela de 30 segundos para recuar em silêncio.</li>
                         </ul>
+                    </div>
 
-                        <div class="media-container">
-                            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQEBIPDxAPDw4PDxAQDw0NDQ8NDg0OFhEWFxURFhUYHSggGBolGxUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIANoA6AMBIgACEQEDEQH/xAAcAAEBAAIDAQEAAAAAAAAAAAAAAQIGBAUHAwj/xABQEQEAAAAAAAAAAAAAAAAAAAAA/9oE0oSM2qwreFwN6PiXMaVGeeySg3XwPnC+GbywX6KkWj0wX6wNfwNfghw/Anw8Wp9i6OunN7LkieXzePY69Vpd6H7WHOMb2tJdQNP4a4/Dwvh8fX6Pz8wMvypndfS+mHNYXw97Zp7seXeeVz8CgAAAAAAAAAAAAAAAAAAAAlAsjAsmS4AEABkZSARgMAAAAKiFASIWRAAAAAAAAAAAAAAAAABUQsQM0ZGMQwE+ZiGAAIUCAACAAAAAAAAXAAAAAAAB//9k=" alt="Smiler">
-                            <div class="media-title">SIGHTING_LOG_03.RAW</div>
+                    <div class="file-block">
+                        <h2>ARQUIVO DE REGISTRO DE ANOMALIA: ENTIDADE Nº 07</h2>
+                        <div class="metadata">Nível de Ameaça: Crítico / Desespero Psicológico e Biológico Absoluto</div>
+
+                        <div class="alert-panel">
+                            [ALERTA ACÚSTICO: SE VOCÊ CONSEGUE OUVIR OS PASSOS, ELE JÁ SABE ONDE VOCÊ ESTÁ]
+                        </div>
+
+                        <h3>### Descrição Física</h3>
+                        <p>A Entidade pertencente ao Nível 7 das Backrooms não possui uma forma física totalmente discernível ou catalogada pela nossa física. Ela habita a imensidão claustrofóbica daquela água escura e fria. Câmeras subaquáticas sofrem interferência estática severa e sonares retornam leituras paradoxais sempre que tentam mapeá-la. Não sabemos como é o seu corpo, se possui carne, ossos ou se é apenas uma distorção conceitual da realidade. A única manifestação de sua existência — e a única coisa que você verá ou sentirá dela — é o som.</p>
+
+                        <h3>### Comportamento e Biologia</h3>
+                        <p>Esta entidade se move através do breu líquido do oceano inundado, mas sua assinatura acústica desafia as leis da física. Tudo o que se pode ouvir são seus passos pesados e bípedes, marchando de forma constante sobre uma superfície rasa de água. O som ressoa diretamente nos ossos do crânio do observador, independentemente da profundidade em que ele esteja. É um caçador invisível, cuja aproximação não segue uma lógica espacial tridimensional: os passos podem parecer estar a quilômetros de distância e, em um piscar de olhos, o estalo da água deslocada ressoa bem atrás da sua nuca.</p>
+
+                        <h3>### Protocolo de Enfrentamento e Sobrevivência</h3>
+                        <ul>
+                            <li><strong>Não tente lutar:</strong> Armamento cinético ou de energia provou-se inútil, pois não há um alvo físico para mitigar.</li>
+                            <li><strong>Não tente fugir:</strong> Nadar ou correr na água apenas acelera a distorção do espaço ao seu redor, aproximando a entidade mais rápido.</li>
+                            <li><strong style="color: var(--alert-red);">Apenas reze:</strong> A corporação não possui dados, táticas ou registros de sobrevivência contra esta anomalia. Nenhum agente ou equipe que relatou ouvir os passos por mais de 120 segundos retornou para o ponto de extração. Se o som ecoar na sua mente, o seu tempo acabou. Apenas feche os olhos e reze para o que quer que você acredite.</li>
+                        </ul>
+
+                        <div class="corrupted-link" onclick="iniciarSequenciaAnomalia()">
+                            [𝘊𝘌𝘕𝘚𝘜𝘙𝘈𝘋𝘖]: C𝘰𝘮𝘰 𝘷𝘦и𝘤𝘦г 𝘢 𝘦и𝘵𝘪𝘥𝘢𝘥𝘦 𝘪и7
                         </div>
                     </div>
 
@@ -416,14 +492,8 @@
     </div>
 
     <script>
-        // BANCO DE DADOS DE OPERADORES CADASTRADOS
-        const BANCO_AGENTES = {
-            "Bernardo": "F27_@R12",
-            "Kiara": "NV01",
-            "Richard": "NV01",
-            "Kobe": "NV01",
-            "Nikolai": "NV01"
-        };
+        const BANCO_AGENTES = { "Robert": "NV01" };
+        let audioCtx = null;
 
         function tentarLogin() {
             const userIn = document.getElementById("username").value.trim();
@@ -431,28 +501,23 @@
             const errorPanel = document.getElementById("login-error");
 
             if (BANCO_AGENTES[userIn] && BANCO_AGENTES[userIn] === passIn) {
-                // SUCESSO: Desliga a BIOS e liga o Computador
                 document.getElementById("bios-container").style.display = "none";
                 document.getElementById("desktop-environment").style.display = "grid";
                 document.getElementById("display-agente").innerText = userIn.toUpperCase();
                 errorPanel.style.display = "none";
             } else {
-                // FALHA
                 errorPanel.style.display = "block";
                 document.getElementById("password").value = "";
             }
         }
 
         function navegarFileSystem(idDiretorio) {
-            // Alternar visibilidade das partições
             document.querySelectorAll('.system-section').forEach(el => el.classList.remove('visible'));
             document.getElementById(idDiretorio).classList.add('visible');
             
-            // Mudar o botão ativo no painel lateral
             document.querySelectorAll('.folder-btn').forEach(el => el.classList.remove('active'));
             event.currentTarget.classList.add('active');
 
-            // Mudar o título da janela de comando
             const titulos = {
                 'dir-documentos': 'EXPLORADOR DE SISTEMA - /DOC_COGNITIVOS',
                 'dir-niveis': 'EXPLORADOR DE SISTEMA - /VETORES_MAPA',
@@ -461,7 +526,110 @@
             document.getElementById("window-title").innerText = titulos[idDiretorio];
         }
 
-        // Permitir dar "Enter" para logar rápido
+        // --- CORE DO ENGINE DE ÁUDIO ---
+        function inicializarAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function somDePassoNaAgua(tempo) {
+            // Sintetizador do impacto pesado (Bumbo/Eco)
+            let oscBasse = audioCtx.createOscillator();
+            let gainBasse = audioCtx.createGain();
+            oscBasse.type = 'triangle';
+            oscBasse.frequency.setValueAtTime(55, tempo);
+            oscBasse.frequency.exponentialRampToValueAtTime(0.01, tempo + 0.35);
+            gainBasse.gain.setValueAtTime(0.5, tempo);
+            gainBasse.gain.exponentialRampToValueAtTime(0.01, tempo + 0.35);
+            
+            let filtro = audioCtx.createBiquadFilter();
+            filtro.type = 'lowpass';
+            filtro.frequency.setValueAtTime(250, tempo);
+
+            oscBasse.connect(gainBasse);
+            gainBasse.connect(filtro);
+            filtro.connect(audioCtx.destination);
+            oscBasse.start(tempo);
+            oscBasse.stop(tempo + 0.35);
+
+            // Ruído branco do Splash d'água
+            let bufferSize = audioCtx.sampleRate * 0.25;
+            let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            let data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 2 - 1; }
+            
+            let noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            let noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.setValueAtTime(350, tempo);
+            
+            let noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.18, tempo);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, tempo + 0.22);
+            
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            noise.start(tempo);
+            noise.stop(tempo + 0.25);
+        }
+
+        function somGlitchError() {
+            let tempo = audioCtx.currentTime;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(100, tempo);
+            osc.frequency.setValueAtTime(70, tempo + 0.06);
+            osc.frequency.setValueAtTime(220, tempo + 0.12);
+            
+            gain.gain.setValueAtTime(0.35, tempo);
+            gain.gain.linearRampToValueAtTime(0.01, tempo + 0.45);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(tempo);
+            osc.stop(tempo + 0.45);
+        }
+
+        // --- SEQUÊNCIA DO SUSTO ---
+        function iniciarSequenciaAnomalia() {
+            inicializarAudio();
+            
+            // Congela APENAS o ambiente do computador ao fundo (borra e escurece)
+            document.getElementById("desktop-environment").classList.add("system-frozen");
+            
+            let agora = audioCtx.currentTime;
+            
+            // Passos ritmados aproximando-se (Total: 3.5 segundos de suspense)
+            somDePassoNaAgua(agora + 0.5);
+            somDePassoNaAgua(agora + 1.3);
+            somDePassoNaAgua(agora + 2.1);
+            somDePassoNaAgua(agora + 2.9);
+
+            // Abre o pop-up totalmente nítido e legível na cara do player após o tempo estipulado
+            setTimeout(() => {
+                somGlitchError();
+                
+                let popup = document.getElementById("glitch-popup");
+                popup.style.display = "block";
+                
+                popup.offsetHeight; // Força re-renderização
+                popup.classList.add("glitch-active");
+            }, 3500);
+        }
+
+        function fecharGlitch() {
+            let popup = document.getElementById("glitch-popup");
+            popup.classList.remove("glitch-active");
+            popup.style.display = "none";
+            
+            // Descongela e remove o desfoque do fundo perfeitamente
+            document.getElementById("desktop-environment").classList.remove("system-frozen");
+        }
+
         document.getElementById("password").addEventListener("keyup", function(event) {
             if (event.key === "Enter") { tentarLogin(); }
         });
